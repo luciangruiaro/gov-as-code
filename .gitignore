@@ -1,0 +1,26 @@
+# IDE and OS noise
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Office lock files on the shared half
+~$*
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets never enter Git
+.env
+
+# Product repos cloned beside the gov repo are repositories of their own
+/git/*
+!/git/README.md
+!/git/project-gov/
+
+# Claude Code links made by tools/link_skills.py (personal, per machine)
+/git/project-gov/.claude/
