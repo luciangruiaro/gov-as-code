@@ -1,0 +1,70 @@
+# workspace.toml: the one configuration file of this governance repository.
+# Every tool in tools/ and prd/sync/ reads it (Python's tomllib). Secrets never go here: they live in .env
+# (copy .env.example). Paths are relative to this repository's root unless they are absolute.
+
+[project]
+name = "Project Name"          # display name, used in headings and reports
+slug = "project"               # kebab-case; repositories are named <slug>-gov, <slug>-be, ...
+client = "Client Name"         # who the product is for; committed files name roles, not people
+
+[shared]
+# The shared drive (Google Drive, OneDrive, Dropbox) that syncs in near real time across the team.
+# In a real workspace this is a link next to git/: see WORKSPACE.md section 5 for the link command.
+path = "../../shared"
+
+[prd]
+source_dir = "PRD"             # folder inside the shared drive that holds the master PRD in Word
+pattern = "*Master*"           # glob (without extension) that picks the master PRD; the mirror takes its name
+# Stable requirement ids. impact.py extracts these from changed lines and looks for them in the decisions.
+id_pattern = '\b(?:FR|NFR|GR|CFG|SM|TRG|OI)-[A-Z0-9]+(?:-[0-9]+)?\b'
+# Where impact.py looks for citations of a changed id (globs, relative to this repository).
+cited_in = ["architecture/**/*.md", "resources/work/**/*.md"]
+# Generated files that repeat citations (the ADR index), so a changed id is not reported twice.
+not_cited_in = ["architecture/decisions/README.md"]
+
+[skills]
+# Upstream of the generic dev-* skills: a local checkout or a git URL. tools/skills/sync_upstream.py copies from it.
+upstream = "https://github.com/luciangruiaro/dev-skills.git"
+
+# Product repositories, cloned next to this one in ../ (the workspace's git/ folder).
+# tools/repos/sync.py keeps them current; the daily digest reads their commits.
+[[repo]]
+slug = "project-be"
+role = "Backend services and APIs"
+url = ""                       # fill in: https://... (Azure DevOps, GitHub, GitLab)
+
+[[repo]]
+slug = "project-fe"
+role = "Frontend, including the in-app feedback widget"
+url = ""
+
+[[repo]]
+slug = "project-data"
+role = "Data pipelines and models"
+url = ""
+
+[[repo]]
+slug = "project-devops"
+role = "Infrastructure as code and pipelines"
+url = ""
+
+[[repo]]
+slug = "project-test"
+role = "End-to-end and acceptance tests"
+url = ""
+
+[backlog]
+system = "jira"                # jira | ado
+project_key = "PRJ"            # Jira project key, or the Azure DevOps project name
+mirror_dir = "Jira"            # folder inside the shared drive that receives the one-way mirror
+
+[feedback]
+# The app stores in-app feedback in its own database; tools/mirrors/feedback.py mirrors it to the shared drive.
+mirror_dir = "Feedback"
+table = "feedback"             # the app's table or view that holds the items
+
+[digest]
+channel = "chat"               # the chat space the daily digest goes to (webhooks live in .env)
+window_hours = 24              # Tuesday to Friday; Mondays look back 72 hours
+team_notes = "Team/Bot notes.md"   # what the digest should know before it writes (on the shared drive)
+directives = "Team/Directives.md"

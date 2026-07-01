@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.pdf binary
+*.png binary
+*.jpg binary
+# Generated: review the source, not these (prd/sync/sync.py writes the mirror)
+prd/*Master*.md linguist-generated=true

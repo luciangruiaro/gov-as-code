@@ -1,0 +1,10 @@
+[project]
+name = "project-gov"
+version = "0.1.0"
+description = "Governance as code: requirements, decisions, rules and skills for Project Name"
+requires-python = ">=3.12"
+dependencies = []          # standard library only (hard rule 7)
+
+[tool.pytest.ini_options]  # the tests are unittest; pytest runs them too, if you have it
+testpaths = ["tests"]
+pythonpath = ["tools"]

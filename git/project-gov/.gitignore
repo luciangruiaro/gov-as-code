@@ -1,0 +1,22 @@
+# Secrets and personal settings
+.env
+.claude/
+*.local.md
+*.local.toml
+
+# Personal skills and working files
+.agents/skills/local-*/
+resources/local/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# IDE and OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
