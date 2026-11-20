@@ -50,9 +50,9 @@ Requirements: Python 3.12+ (standard library only), pandoc 3+ for the PRD sync, 
 |---|---|
 | Folder structure, READMEs, templates, naming rules (both halves) | Complete |
 | `AGENTS.md` (one rule set for every agent tool), `CLAUDE.md`, Copilot instructions, `WORKSPACE.md` | Complete |
-| Skills: 13 generic `dev-*` (from the upstream `dev-skills` repository) and 7 project `gov-*` | Complete. The 4 `gov-*` skills that rely on stub tools say so. |
-| PRD sync (Word → Markdown), PRD impact (diff → decisions → worksheet), ADR index, workspace index, code-graph scan (Graphify, GitNexus), skill linker, upstream skill sync, bootstrap | Implemented and tested |
-| Backlog pull (Jira or Azure DevOps), feedback pull, code sync, digest collector, dashboard | Stubs, each with its full contract in the docstring: implement per project |
+| Skills: 13 generic `dev-*` (from the upstream `dev-skills` repository) and 8 project `gov-*` | Complete. The 3 `gov-*` skills that rely on stub tools say so. |
+| PRD sync (Word → Markdown), PRD impact (diff → decisions → worksheet), ADR index, workspace index, code-graph scan (Graphify, GitNexus), skill linker, upstream skill sync, digest collector, chat sender (Google Chat webhooks), bootstrap | Implemented and tested |
+| Backlog pull (Jira or Azure DevOps), feedback pull, code sync, dashboard | Stubs, each with its full contract in the docstring: implement per project |
 
 ## Samples
 All fictional, marked `SAMPLE`, dropped by `new-project.py`:

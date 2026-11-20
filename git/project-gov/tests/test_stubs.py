@@ -7,7 +7,7 @@ import unittest
 
 from support import ROOT
 
-STUBS = ["mirrors/backlog.py", "mirrors/feedback.py", "repos/sync.py", "reporting/digest.py", "reporting/dashboard.py"]
+STUBS = ["mirrors/backlog.py", "mirrors/feedback.py", "repos/sync.py", "reporting/dashboard.py"]
 
 
 class Stubs(unittest.TestCase):

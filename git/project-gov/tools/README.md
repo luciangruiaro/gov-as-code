@@ -5,7 +5,7 @@ Everything that can be computed is computed here, so people and agents spend jud
 ```
 tools/
 ├── workspace/      the workspace itself
-│   ├── config.py       loads workspace.toml and resolves every path (all tools import it)
+│   ├── config.py       loads workspace.toml, resolves every path, reads .env (all tools import it)
 │   └── index.py        writes the shared drive's INDEX.md and the tree in WORKSPACE.md
 ├── architecture/   the decisions
 │   └── adr_index.py    rebuilds the ADR index in architecture/decisions/README.md
@@ -18,9 +18,10 @@ tools/
 ├── repos/          the product repositories beside this one
 │   ├── sync.py         clones them, then fast-forwards only                 (stub)
 │   └── scan.py         refreshes their code graphs: Graphify and GitNexus
-└── reporting/      what people read                                          (stubs)
-    ├── digest.py       the daily digest's evidence bundle
-    └── dashboard.py    one offline HTML dashboard
+└── reporting/      what people read
+    ├── digest.py       the workspace update's evidence bundle, since the last update sent
+    ├── chat.py         posts one message to a team chat space (the only tool that sends anything)
+    └── dashboard.py    one offline HTML dashboard                            (stub)
 ```
 
 The PRD's own tools live with the PRD, in [`../prd/sync/`](../prd/sync/SYNC.md): `sync.py` (Word → Markdown mirror) and `impact.py` (mirror diff → the decisions it touches).
@@ -35,7 +36,8 @@ The PRD's own tools live with the PRD, in [`../prd/sync/`](../prd/sync/SYNC.md):
 | `mirrors/feedback.py` | **stub** | `gov-feedback-sync` | `py -3.12 tools/mirrors/feedback.py [--full] [--dry-run]` |
 | `repos/sync.py` | **stub** | `gov-code-sync` | `py -3.12 tools/repos/sync.py [--check] [--clone]` |
 | `repos/scan.py` | implemented | `gov-code-sync` | `py -3.12 tools/repos/scan.py [--check] [--only graphify\|gitnexus] [PATH ...]` |
-| `reporting/digest.py` | **stub** | `gov-digest` | `py -3.12 tools/reporting/digest.py [--since HOURS]` |
+| `reporting/digest.py` | implemented | `gov-digest` | `py -3.12 tools/reporting/digest.py [--since-last] [--hours N] [--until "YYYY-MM-DD HH:MM"] [--fetch]` |
+| `reporting/chat.py` | implemented | `gov-chat`, `gov-digest` | `py -3.12 tools/reporting/chat.py [--to SPACE] [--persona NAME] [--thread KEY] [--dry-run] ("message" \| --file PATH)` |
 | `reporting/dashboard.py` | **stub** | — | `py -3.12 tools/reporting/dashboard.py [--out FILE]` |
 
 **A stub** has its intended command line and its full contract in the module docstring: inputs, outputs and file formats, and rules. It exits 2, pointing to that contract. To implement one: plan it (`dev-plan`), write the tests first, and keep the contract, or change the docstring and this README in the same commit.

@@ -35,5 +35,5 @@ Link the shared drive in beside `git/` (WORKSPACE.md section 5), then `py -3.12 
 ## Status
 | Part | State |
 |---|---|
-| PRD sync (`sync.py`), PRD impact (`impact.py`), ADR index, workspace index, code-graph scan (Graphify, GitNexus), skill linker, upstream skill sync | Implemented and tested |
-| Backlog pull, feedback pull, code sync, digest collector, dashboard | Stubs with full contracts in their docstrings (`tools/README.md`): implement per project |
+| PRD sync (`sync.py`), PRD impact (`impact.py`), ADR index, workspace index, code-graph scan (Graphify, GitNexus), skill linker, upstream skill sync, digest collector, chat sender (Google Chat webhooks) | Implemented and tested |
+| Backlog pull, feedback pull, code sync, dashboard | Stubs with full contracts in their docstrings (`tools/README.md`): implement per project |

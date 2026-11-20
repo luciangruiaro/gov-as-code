@@ -89,7 +89,7 @@ Product repositories are cloned beside this one, in the workspace's `git/` folde
  client & team ──edit──▶ PRD/*.docx ──sync.py──▶ prd/*.md ──git diff──▶ impact.py ──▶ audits/*_prd-adr-alignment.md ──gov-adr──▶ ADRs
  Jira / Azure DevOps ──mirrors/backlog.py──▶ Jira/         app database ──mirrors/feedback.py──▶ Feedback/
  product repos ──repos/sync.py──▶ git/<repo>/              ideas ──▶ proposals ──▶ ADR backlog ──▶ ADRs
-                         all of it ──reporting/digest.py──▶ evidence bundle ──gov-digest──▶ team chat (approval-gated)
+                         all of it ──reporting/digest.py──▶ evidence bundle ──gov-digest──▶ reporting/chat.py ──▶ team chat (approval-gated)
 ```
 
 | Flow | From → to | Tool (skill) | Direction | When |
@@ -100,9 +100,9 @@ Product repositories are cloned beside this one, in the workspace's `git/` folde
 | Code | Product repositories → `git/<repo>/` | `tools/repos/sync.py` (`gov-code-sync`) | Fast-forward only | Daily, before the digest |
 | Code graphs | Each repository → its `graphify-out/` (Graphify) and `.gitnexus/` (GitNexus) | `tools/repos/scan.py` (`gov-code-sync`) | Local snapshots, never committed | After each code sync, and after code changes |
 | Ideas to decisions | `Team/Ideas/` → `Team/Proposals/` → `architecture/decisions/backlog.md` → ADR | `dev-brainstorm`, `gov-adr` | Into Git once decided | On decision |
-| Daily digest | All of the above → team chat | `tools/reporting/digest.py` (`gov-digest`) | Out, approval-gated | Weekdays before stand-up |
+| Daily digest | All of the above → team chat | `tools/reporting/digest.py`, `tools/reporting/chat.py` (`gov-digest`) | Out, approval-gated | Weekdays before stand-up, and on demand since the last update sent |
 
-Status: the PRD flow, the indexes and the code-graph scan are implemented. The backlog, feedback, code-sync and digest tools are **stubs with full contracts**: implement each per project (`tools/README.md`).
+Status: the PRD flow, the indexes, the code-graph scan and the digest (collector and chat sender) are implemented. The backlog, feedback and code-sync tools are **stubs with full contracts**: implement each per project (`tools/README.md`).
 
 ## 7. Looking for… → go to
 | Looking for | Go to |

@@ -82,7 +82,8 @@ Each repository in the workspace (this one, and the product repositories cloned 
 | `gov-backlog-sync` | Mirror Jira or Azure DevOps to the drive's `Jira/` folder (stub tool). |
 | `gov-feedback-sync` | Mirror in-app feedback from the app's database to the drive's `Feedback/` folder (stub tool). |
 | `gov-code-sync` | Clone the product repositories beside this one and fast-forward them (stub tool). |
-| `gov-digest` | Compose the daily digest from the collector's evidence, get it approved, send it (stub tool). |
+| `gov-digest` | Tell the team, or just you, what moved in the workspace since the last update was sent: write it from the collector's evidence, log it, get it approved, post it to the team chat. |
+| `gov-chat` | Post one message to a team chat space (test, notifications, discussion), signed with a persona. |
 | `dev-brainstorm` | Compare framings for a rough idea and recommend one, with trade-offs and open questions. |
 | `dev-map` | Chart a program across plans and repositories: destination, decision ledger, frontier, unknowns. |
 | `dev-plan` | Turn a chosen direction into a roadmap and phase sub-plans grounded in the code. |
@@ -120,7 +121,7 @@ The `dev-*` skills take their output paths from this table.
 | Plan | `resources/work/plans/<YYYY-MM>/<slug>/<slug>.md`, with `STATUS.md` and `phases/` beside it | `dev-plan` |
 | Investigation | `resources/work/debug/<slug>/<slug>.md` | `dev-debug`, `dev-dig` |
 | Review or audit | `resources/audits/YYYY-MM-DD_slug.{md,html}` | `dev-architecture-review`, `dev-spec-verify`, `dev-doc-audit` |
-| Daily digest drafts | `resources/local/digest/YYYY-MM-DD.md` (local only) | `gov-digest` |
+| Workspace updates: the log of drafts and sends, and the draft being sent | `resources/local/digest/messages.md` and `draft.md` (local only) | `gov-digest` |
 
 ## Commands
 ```
@@ -129,6 +130,8 @@ py -3.12 prd/sync/impact.py [--write]                    # the decisions a PRD c
 py -3.12 tools/architecture/adr_index.py [--check]       # rebuild the ADR index
 py -3.12 tools/workspace/index.py [--check]              # the drive's INDEX.md and the tree in WORKSPACE.md
 py -3.12 tools/repos/scan.py [--check] [PATH ...]        # refresh the code graphs (Graphify, GitNexus)
+py -3.12 tools/reporting/digest.py [--since-last | --hours N]   # the workspace update's evidence bundle
+py -3.12 tools/reporting/chat.py [--to SPACE] [--dry-run] "…"   # post to the team chat (webhooks in .env)
 py -3.12 tools/skills/link.py                            # give Claude Code the shared skills
 py -3.12 tools/skills/sync_upstream.py [--from PATH]     # refresh the dev-* skills from upstream
 py -3.12 -m unittest discover -s tests                   # every check

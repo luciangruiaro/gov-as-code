@@ -64,7 +64,8 @@ mirror_dir = "Feedback"
 table = "feedback"             # the app's table or view that holds the items
 
 [digest]
-channel = "chat"               # the chat space the daily digest goes to (webhooks live in .env)
-window_hours = 24              # Tuesday to Friday; Mondays look back 72 hours
+channel = "chat"               # where the update goes: the team chat (webhooks live in .env)
+space = "notifications"        # its default space: test | notifications | discussion (operations/README.md)
+window_hours = 24              # Tuesday to Friday; Mondays look back 72 hours; --since-last resumes from the last sent
 team_notes = "Team/Bot notes.md"   # what the digest should know before it writes (on the shared drive)
 directives = "Team/Directives.md"

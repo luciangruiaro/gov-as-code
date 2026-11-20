@@ -79,3 +79,29 @@ def load(root: Path | None = None) -> Workspace:
         raise SystemExit(f"workspace.toml not found in {root}")
     with config_file.open("rb") as handle:
         return Workspace(root=root, config=tomllib.load(handle))
+
+
+def read_env(path: Path) -> dict[str, str]:
+    """Parse a .env file: KEY=VALUE lines, # comments, an optional `export ` and quotes. A missing file gives {}."""
+    values: dict[str, str] = {}
+    if not path.is_file():
+        return values
+    for raw in path.read_text(encoding="utf-8-sig").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.removeprefix("export ").partition("=")
+        key, value = key.strip(), value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+            value = value[1:-1]
+        elif " #" in value:
+            value = value.split(" #", 1)[0].rstrip()
+        values[key] = value
+    return values
+
+
+def setting(name: str, root: Path | None = None, default: str = "") -> str:
+    """A machine-local setting or secret: the process environment wins over .env (gitignored), then the default."""
+    if os.environ.get(name):
+        return os.environ[name]
+    return read_env((root or ROOT) / ".env").get(name) or default
