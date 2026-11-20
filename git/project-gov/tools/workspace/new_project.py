@@ -1,16 +1,18 @@
 """Start a new project's workspace from this skeleton.
 
-Usage:
-  py -3.12 new-project.py --name "Acme Portal" --slug acme --dest "C:/Clients/Acme/workspace"
-                          [--client "Acme Ltd"] [--shared "G:/Shared drives/Acme/Engineering Workspace"]
-                          [--shared-name shared] [--keep-samples] [--no-git] [--dry-run]
+Usage, from the skeleton's root:
+  py -3.12 git/project-gov/tools/workspace/new_project.py --name "Acme Portal" --slug acme --dest "C:/Clients/Acme/workspace"
+      [--client "Acme Ltd"] [--shared "G:/Shared drives/Acme/Engineering Workspace"]
+      [--shared-name shared] [--keep-samples] [--no-git] [--dry-run]
+
+Skeleton only: it lives inside the template it copies, and leaves itself out of the new governance repository.
 
 What it does:
 1. Copies shared/ (the template of the synced drive):
    - With --shared, into that existing drive folder, adding only the files that are missing, then links it into the
      workspace as <dest>/<shared-name> (a junction on Windows, a symlink elsewhere).
    - Without --shared, as a plain folder <dest>/<shared-name>.
-2. Copies git/project-gov/ to <dest>/git/<slug>-gov/ (without .claude/, caches or .env).
+2. Copies git/project-gov/ to <dest>/git/<slug>-gov/ (without .claude/, caches, .env or this script).
 3. Drops the sample content, unless --keep-samples is given:
    - deletes the sample files (SAMPLES below);
    - removes SAMPLE:BEGIN/END blocks, and table rows, bullets and notes marked SAMPLE, from the files it keeps;
@@ -31,11 +33,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-SKELETON = Path(__file__).resolve().parent
+TEMPLATE_GOV = Path(__file__).resolve().parents[2]  # git/project-gov (this file: tools/workspace/new_project.py)
+SKELETON = TEMPLATE_GOV.parents[1]                   # the skeleton's root, which holds git/ and shared/
 TEMPLATE_SHARED = SKELETON / "shared"
-TEMPLATE_GOV = SKELETON / "git" / "project-gov"
 SKIP = shutil.ignore_patterns(".claude", "__pycache__", ".pytest_cache", ".env", ".idea", "local", "graphify-out",
-                              ".gitnexus")
+                              ".gitnexus", Path(__file__).name)
 TEXT = {".md", ".toml", ".py", ".txt", ".json", ".yml", ".yaml", ".example", ".cfg", ".ini", ""}
 
 # Sample files and folders, relative to the gov repo ("gov:") or the shared drive ("shared:").

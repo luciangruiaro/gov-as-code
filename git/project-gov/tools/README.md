@@ -6,7 +6,8 @@ Everything that can be computed is computed here, so people and agents spend jud
 tools/
 ├── workspace/      the workspace itself
 │   ├── config.py       loads workspace.toml, resolves every path, reads .env (all tools import it)
-│   └── index.py        writes the shared drive's INDEX.md and the tree in WORKSPACE.md
+│   ├── index.py        writes the shared drive's INDEX.md and the tree in WORKSPACE.md
+│   └── new_project.py  starts a new project's workspace from the skeleton (skeleton only; not copied)
 ├── architecture/   the decisions
 │   └── adr_index.py    rebuilds the ADR index in architecture/decisions/README.md
 ├── skills/         the shared skills
@@ -29,6 +30,7 @@ The PRD's own tools live with the PRD, in [`../prd/sync/`](../prd/sync/SYNC.md):
 | Tool | State | Skill | Run |
 |---|---|---|---|
 | `workspace/index.py` | implemented | `gov-workspace-map` | `py -3.12 tools/workspace/index.py [--check]` |
+| `workspace/new_project.py` | implemented; skeleton only, left out of new projects | — | from the skeleton's root: `py -3.12 git/project-gov/tools/workspace/new_project.py --name NAME --slug SLUG --dest PATH [--shared PATH] [--keep-samples] [--no-git] [--dry-run]` |
 | `architecture/adr_index.py` | implemented | `gov-adr` | `py -3.12 tools/architecture/adr_index.py [--check]` |
 | `skills/link.py` | implemented | — | `py -3.12 tools/skills/link.py` |
 | `skills/sync_upstream.py` | implemented | — | `py -3.12 tools/skills/sync_upstream.py [--from PATH] [--check]` |

@@ -55,7 +55,7 @@ Add the change-log row: `py -3.12 prd/sync/sync.py --log "…"`. Write one line 
 ## 6. Commit when asked
 Stage the mirror (with a renamed mirror's old name), `prd/assets/master/` and the worksheet, nothing else. Message: `docs(prd): sync the master PRD to v0.2` (the version from the file name), with the change-log line as the body. Answering the worksheet and changing ADRs are separate commits (`docs(adr): …`).
 
-<!-- SAMPLE:BEGIN (new-project.py drops this section with the samples) -->
+<!-- SAMPLE:BEGIN (tools/workspace/new_project.py drops this section with the samples) -->
 ## Try it on the sample
 The skeleton ships a SAMPLE master PRD, built from [`../templates/sample-master-prd.md`](../templates/sample-master-prd.md), and its mirror. One decision, [ADR-002](../../architecture/decisions/ADR-002-sample-single-sign-on.md), cites `FR-001`, `NFR-002` and `OI-001`. To see the whole chain on a commit of your own:
 ```

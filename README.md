@@ -32,8 +32,8 @@ A requirement changes in Word, and the mirror in Git shows the exact diff. `impa
 
 ## Start a new project
 ```
-py -3.12 new-project.py --name "Acme Portal" --slug acme --dest "C:\Clients\Acme\workspace"
-py -3.12 new-project.py --name "Acme Portal" --slug acme --dest "C:\Clients\Acme\workspace" --shared "G:\Shared drives\Acme\Engineering Workspace"
+py -3.12 git/project-gov/tools/workspace/new_project.py --name "Acme Portal" --slug acme --dest "C:\Clients\Acme\workspace"
+py -3.12 git/project-gov/tools/workspace/new_project.py --name "Acme Portal" --slug acme --dest "C:\Clients\Acme\workspace" --shared "G:\Shared drives\Acme\Engineering Workspace"
 ```
 The script:
 1. Copies both halves. With `--shared`, it fills that existing drive folder and links it into the workspace.
@@ -55,7 +55,7 @@ Requirements: Python 3.12+ (standard library only), pandoc 3+ for the PRD sync, 
 | Backlog pull (Jira or Azure DevOps), feedback pull, code sync, dashboard | Stubs, each with its full contract in the docstring: implement per project |
 
 ## Samples
-All fictional, marked `SAMPLE`, dropped by `new-project.py`:
+All fictional, marked `SAMPLE`, dropped by the bootstrap (`git/project-gov/tools/workspace/new_project.py`):
 - a request-approval portal's master PRD (Word, plus its mirror);
 - one ADR that cites it;
 - an answered alignment worksheet;

@@ -5,7 +5,7 @@ This repository is the **governance-as-code skeleton**: the template every new p
 This file is canonical. [`CLAUDE.md`](CLAUDE.md) imports it, and every other agent tool reads it directly. **Inside `git/project-gov/`, that folder's own [`AGENTS.md`](git/project-gov/AGENTS.md) applies too**: it is the rule set every new project inherits. Change the template there, and keep this file for the skeleton itself.
 
 ## Rules for the skeleton
-1. **No client content, ever.** No names, data or documents from a real client. Examples are fictional and marked `SAMPLE`, and `new-project.py` drops them.
+1. **No client content, ever.** No names, data or documents from a real client. Examples are fictional and marked `SAMPLE`, and the bootstrap (`git/project-gov/tools/workspace/new_project.py`) drops them.
 2. **Keep the two halves in step.** A folder added to `shared/` gets a README and a row in `git/project-gov/WORKSPACE.md`. A tool added to `git/project-gov/tools/` gets a test and a row in that folder's README.
 3. **Tests pass before you hand over:** `cd git/project-gov && py -3.12 -m unittest discover -s tests`.
 4. **Commit only when asked, and never push unless asked.** Group commits with the `dev-group-and-commit` skill.
