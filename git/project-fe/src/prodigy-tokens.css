@@ -1,0 +1,124 @@
+/* Prodigy Design System: tokens for this repository's HTML pages (reports, dashboards, explainers).
+   Values come from ui-kit.md: section 1 (colours, light and dark) and section 9 (the CSS variable reference).
+   They must stay equal to it; tests/test_ui_kit.py checks that. Fonts load from Google Fonts in the page (README).
+   Theme: light by default; dark with <html data-theme="dark">, or with the system setting unless data-theme="light". */
+
+:root {
+  /* Colours: light theme (ui-kit.md 1.1) */
+  --color-primary:            #001FBA;
+  --color-primary-strong:     #0820B3;
+  --color-accent:             #00FFBD;
+  --color-accent-soft:        #70E8C0;
+  --color-bg-canvas:          #f9fafb;
+  --color-bg-surface:         #ffffff;
+  --color-bg-surface-soft:    #f4f7ff;
+  --color-bg-tint:            #edf2ff;
+  --color-text-primary:       #0f173d;
+  --color-text-secondary:     #4e5d85;
+  --color-text-tertiary:      #6f7ca1;
+  --color-border-subtle:      #d8e0f2;
+  --color-border-strong:      #bcc9e8;
+
+  /* Reasoning phase palette (ui-kit.md 8): contrasts on both canvases; also a categorical palette for charts */
+  --phase-planning:     #4F7FFF;
+  --phase-routing:      #00C9F0;
+  --phase-execution:    #00C896;
+  --phase-evaluation:   #F7A23B;
+  --phase-replan:       #F45B5B;
+  --phase-synthesis:    #7C5CFC;
+  --phase-conversation: var(--phase-execution);
+  --phase-idle:         var(--color-text-tertiary);
+
+  /* Typography (ui-kit.md 2) */
+  --font-body:    'Manrope', sans-serif;
+  --font-display: 'Sora', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-md: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+
+  --line-height-tight: 1.2;
+  --line-height-copy:  1.6;
+
+  --letter-spacing-tight:  -0.02em;
+  --letter-spacing-normal:  0;
+
+  /* Shadows, tinted with the brand primary (ui-kit.md 3) */
+  --shadow-brand-sm: 0 8px 20px rgba(0, 31, 186, 0.06);
+  --shadow-brand-md: 0 12px 32px rgba(0, 31, 186, 0.08);
+  --shadow-brand-lg: 0 20px 48px rgba(0, 31, 186, 0.12);
+
+  /* Radius (ui-kit.md 4) */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-2xl: 24px;
+
+  /* Layout (ui-kit.md 5.2) */
+  --layout-sidebar:           260px;
+  --layout-sidebar-collapsed:  68px;
+  --layout-topbar:             56px;
+  --layout-footer:             36px;
+
+  /* Motion (ui-kit.md 7) */
+  --transition-fast: 180ms ease;
+  --transition-base: 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-slow: 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-expo:       cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Colours: dark theme (ui-kit.md 1.2) */
+:root[data-theme="dark"] {
+  --color-primary:            #3b5bff;
+  --color-primary-strong:     #5a74ff;
+  --color-accent:             #00FFBD;
+  --color-accent-soft:        #1a6b52;
+  --color-bg-canvas:          #001528;
+  --color-bg-surface:         #0a2540;
+  --color-bg-surface-soft:    #0d2e4d;
+  --color-bg-tint:            #102a45;
+  --color-text-primary:       #ffffff;
+  --color-text-secondary:     #94a3c4;
+  --color-text-tertiary:      #6b7a9e;
+  --color-border-subtle:      #1c3a5c;
+  --color-border-strong:      #2a4f78;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary:            #3b5bff;
+    --color-primary-strong:     #5a74ff;
+    --color-accent:             #00FFBD;
+    --color-accent-soft:        #1a6b52;
+    --color-bg-canvas:          #001528;
+    --color-bg-surface:         #0a2540;
+    --color-bg-surface-soft:    #0d2e4d;
+    --color-bg-tint:            #102a45;
+    --color-text-primary:       #ffffff;
+    --color-text-secondary:     #94a3c4;
+    --color-text-tertiary:      #6b7a9e;
+    --color-border-subtle:      #1c3a5c;
+    --color-border-strong:      #2a4f78;
+  }
+}
+
+/* A minimal base, so a plain page looks like the system without any classes */
+body {
+  margin: 0;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-copy);
+}
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+a { color: var(--color-primary); }
+code, pre { font-family: var(--font-mono); }
