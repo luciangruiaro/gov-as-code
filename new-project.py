@@ -49,6 +49,7 @@ SAMPLES = [
     "gov:architecture/decisions/ADR-007-sample-hello-world-react-web.md",
     "gov:resources/audits/2026-01-20_prd-adr-alignment.md",
     "gov:resources/work/brainstorms/2026-01",
+    "gov:resources/work/brainstorms/2026-11/photo-sharing-app",
     "gov:resources/work/plans/2026-01",
     "gov:resources/work/debug/upload-limit-ignored",
     "shared:PRD/Product Requirements Document (Master) - Project Name v0.1.docx",
