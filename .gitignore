@@ -21,6 +21,14 @@ __pycache__/
 /git/*
 !/git/README.md
 !/git/project-gov/
+# DevTalks demo: Hello World's three repositories, kept here as plain folders (git/README.md)
+!/git/project-db/
+!/git/project-be/
+!/git/project-fe/
+
+# Node and build output
+node_modules/
+dist/
 
 # Claude Code's local folders: skill links made by tools/skills/link.py, GitNexus's installed skills, settings
 /.claude/
