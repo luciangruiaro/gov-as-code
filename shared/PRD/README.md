@@ -18,5 +18,5 @@
 - A Google Doc has no content on disk: download it as Word before syncing.
 
 <!-- SAMPLE:BEGIN -->
-> The `… - Project Name v0.1.docx` file is a SAMPLE, built from `prd/templates/sample-master-prd.md`. A new project drops it.
+> The `… - Project Name v0.1.docx` and `v0.2.docx` files are SAMPLES, built from `prd/templates/sample-master-prd.md` (v0.2 adds Hello World). A new project drops them.
 <!-- SAMPLE:END -->

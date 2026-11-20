@@ -60,9 +60,9 @@ Stage the mirror (with a renamed mirror's old name), `prd/assets/master/` and th
 The skeleton ships a SAMPLE master PRD, built from [`../templates/sample-master-prd.md`](../templates/sample-master-prd.md), and its mirror. One decision, [ADR-002](../../architecture/decisions/ADR-002-sample-single-sign-on.md), cites `FR-001`, `NFR-002` and `OI-001`. To see the whole chain on a commit of your own:
 ```
 git add -A && git commit -m "baseline"                     # impact.py compares with HEAD
-# change the sample: reword FR-001, add an FR-005 row, delete the OI-002 row, then build v0.2
-pandoc prd/templates/sample-master-prd.md -o "../../shared/PRD/Product Requirements Document (Master) - Project Name v0.2.docx"
-py -3.12 prd/sync/sync.py                                   # renames the mirror to v0.2, keeps the change log
+# change the sample: reword FR-001, add an FR-005 row, delete the OI-002 row, then build v0.3
+pandoc prd/templates/sample-master-prd.md -o "../../shared/PRD/Product Requirements Document (Master) - Project Name v0.3.docx"
+py -3.12 prd/sync/sync.py                                   # renames the mirror to v0.3, keeps the change log
 git add -A -- prd/ && git diff --staged -M --word-diff -- prd/   # FR-001 reworded, FR-005 added, OI-002 gone
 py -3.12 prd/sync/impact.py --write                         # FR-001 changed → ADR-002; FR-005 added; OI-002 removed
 ```

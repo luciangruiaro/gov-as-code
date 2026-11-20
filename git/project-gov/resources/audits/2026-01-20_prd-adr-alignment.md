@@ -1,6 +1,6 @@
 # PRD → decisions alignment, 2026-01-20
 
-> SAMPLE. Produced by the "Try it on the sample" walkthrough in `prd/sync/SYNC.md` (v0.1 → v0.2), then answered, to show the shape of an answered worksheet. The repository's mirror stays at v0.1, and these answers are not landed in the sample ADRs. A new project drops this file.
+> SAMPLE. Produced by the "Try it on the sample" walkthrough in `prd/sync/SYNC.md` (v0.1 → v0.2), then answered, to show the shape of an answered worksheet. That v0.2 was a trial and never committed: the repository's own v0.2 adds Hello World instead, and these answers are not landed in the sample ADRs. A new project drops this file.
 
 > Started by `prd/sync/impact.py`, comparing `HEAD:prd/Product Requirements Document (Master) - Project Name v0.1.md` with the synced mirror `prd/Product Requirements Document (Master) - Project Name v0.2.md`.
 > Fill in every **Answer**, then land the answers in the decisions with the `gov-adr` skill. Keep this file once answered: it is the record of why the decisions moved.
