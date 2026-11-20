@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="The dev-* skills of this governance repository: the workflow that connects them, the catalog, recipes, and how to use and refresh them. Styled with the Prodigy Design System.">
+  <title>Dev Skills guide</title>
+  <!-- Brand: the Prodigy Design System (resources/ui-kit/). Every colour, font, radius, shadow and duration below reads
+       a token from prodigy-tokens.css, so a client kit that keeps the token names re-themes this page too. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../resources/ui-kit/prodigy-tokens.css">
+  <script>
+    try {
+      const saved = localStorage.getItem('gov-theme');
+      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+    } catch (_) { /* The system theme still applies when storage is unavailable. */ }
+  </script>
+  <style>
+    /* ---------- Page tokens: derived from the kit, never new colours ---------- */
+    :root {
+      color-scheme: light dark;
+      --on-primary: white;                          /* ui-kit 6.1: primary buttons carry white text */
+      --on-accent: var(--color-text-primary);       /* dark ink on the accent fill */
+      --wf-flow: var(--color-primary);              /* delivery flow */
+      --wf-program: var(--phase-synthesis);         /* program loop */
+      --wf-support: var(--phase-routing);           /* supporting tools */
+      --wf-unknown: var(--phase-evaluation);        /* uncertainty */
+      --wf-feedback: var(--phase-replan);           /* verification feedback: a step failed, go again */
+      --cat-explore: var(--phase-planning);
+      --cat-build: var(--phase-routing);
+      --cat-verify: var(--phase-execution);
+      --cat-ship: var(--color-primary);
+      --cat-setup: var(--color-text-tertiary);
+      --chrome-shadow: 0 4px 12px -2px rgba(0, 31, 186, 0.06);   /* ui-kit 10.21 */
+      --focus-ring: 0 0 0 4px color-mix(in srgb, var(--color-accent) 35%, transparent);
+      --spring: var(--ease-expo);
+      --ink-brand: var(--color-primary);            /* brand-coloured text: links, skill names */
+    }
+    :root[data-theme="light"] { color-scheme: light; }
+    :root[data-theme="dark"] { color-scheme: dark; --on-accent: var(--color-bg-canvas); --ink-brand: var(--color-primary-strong); }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --on-accent: var(--color-bg-canvas); --ink-brand: var(--color-primary-strong); } }
+
+    /* ---------- Base ---------- */
+    [hidden] { display: none !important; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+    body { overflow-wrap: break-word; font-size: var(--font-size-sm); }
+    h1, h2, h3 { margin: 0; color: var(--color-text-primary); }
+    p { margin: 0 0 12px; }
+    a { color: var(--ink-brand); text-decoration: none; transition: color var(--transition-fast); }
+    a:hover { color: var(--color-primary-strong); text-decoration: underline; text-underline-offset: 3px; }
+    code { font-size: .92em; background: var(--color-bg-tint); padding: 1px 6px; border-radius: 6px; color: var(--color-text-primary); white-space: nowrap; }
+    .here code, td code { white-space: normal; overflow-wrap: anywhere; }
+    code, pre { font-variant-ligatures: none; }   /* keep -- and -> literal in commands */
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; box-shadow: var(--focus-ring); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .container { width: min(1160px, 100%); margin: 0 auto; padding: 0 24px; }
+    .skip-link { position: fixed; top: -80px; left: 16px; z-index: 100; padding: 12px 16px; background: var(--color-bg-surface); border: 1px solid var(--color-primary); border-radius: var(--radius-md); }
+    .skip-link:focus { top: 8px; }
+
+    /* ---------- Buttons (ui-kit 6.1) ---------- */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 22px; border-radius: var(--radius-xl); font: 600 var(--font-size-sm)/1 var(--font-body); cursor: pointer; border: 1px solid transparent; transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast); }
+    .btn:hover { text-decoration: none; }
+    .btn--primary { background: var(--color-primary); color: var(--on-primary); box-shadow: var(--shadow-brand-sm); }
+    .btn--primary:hover { color: var(--on-primary); background: var(--color-primary-strong); transform: translateY(-2px); box-shadow: var(--shadow-brand-md); }
+    .btn--secondary { background: var(--color-bg-surface); color: var(--ink-brand); border-color: var(--color-border-subtle); }
+    .btn--secondary:hover { background: var(--color-bg-tint); color: var(--ink-brand); }
+    .btn--ghost { background: transparent; color: var(--color-text-secondary); border-color: var(--color-border-subtle); border-radius: var(--radius-md); }
+    .btn--ghost:hover { color: var(--ink-brand); border-color: color-mix(in srgb, var(--color-primary) 30%, transparent); }
+    .btn--sm { min-height: 30px; padding: 0 10px; font-size: var(--font-size-xs); font-weight: 500; }
+
+    /* ---------- Eyebrows and section headers (ui-kit 10.27) ---------- */
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font: 700 var(--font-size-xs)/1.4 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-secondary); }
+    .eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--dot, var(--color-accent)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot, var(--color-accent)) 22%, transparent); flex: none; }
+    .eyebrow--plain::before { display: none; }
+
+    /* ---------- Topbar: glass + brand shadow + orb (ui-kit 10.21), logo with pulse dot (10.12) ---------- */
+    .topbar { position: sticky; top: 0; z-index: 30; overflow: hidden; border-bottom: 1px solid var(--color-border-subtle); box-shadow: var(--chrome-shadow);
+      background: color-mix(in srgb, var(--color-bg-surface) 82%, transparent);
+      background-image: linear-gradient(180deg, var(--color-bg-surface) 0%, color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-bg-canvas)) 100%);
+      -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+    .topbar__orb { position: absolute; top: -48px; left: 16px; width: 96px; height: 96px; border-radius: 50%; background: var(--color-accent); opacity: .15; filter: blur(32px); pointer-events: none; }
+    .topbar__inner { position: relative; display: flex; align-items: center; gap: 28px; min-height: var(--layout-topbar); }
+    .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--color-text-primary); }
+    .brand:hover { text-decoration: none; color: var(--color-text-primary); }
+    .logo { position: relative; width: 32px; height: 32px; border-radius: var(--radius-sm); display: grid; place-items: center; flex: none;
+      background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 45%, var(--color-accent)) 100%);
+      color: var(--on-primary); font: 700 var(--font-size-sm)/1 var(--font-display); box-shadow: var(--shadow-brand-sm); transition: transform var(--transition-fast); }
+    .brand:hover .logo { transform: scale(1.06); }
+    .logo::after { content: ''; position: absolute; right: -2px; bottom: -2px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 2px var(--color-bg-surface); }
+    .brand__text { display: grid; line-height: 1.15; }
+    .brand__name { font: 600 var(--font-size-md)/1.2 var(--font-display); letter-spacing: var(--letter-spacing-tight); }
+    .brand__realm { display: inline-flex; align-items: center; gap: 6px; font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .brand__realm::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); }
+    .nav { display: flex; gap: 4px; }
+    .nav a { position: relative; padding: 8px 10px; border-radius: var(--radius-sm); color: var(--color-text-secondary); font-weight: 600; font-size: var(--font-size-sm); }
+    .nav a:hover { color: var(--ink-brand); background: var(--color-bg-tint); text-decoration: none; }
+    .nav a::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: 2px; height: 2px; border-radius: 2px; background: var(--color-accent); transform: scaleX(0); transition: transform var(--transition-base); }
+    .nav a[aria-current="true"] { color: var(--color-text-primary); }
+    .nav a[aria-current="true"]::after { transform: scaleX(1); }
+    .spacer { flex: 1; }
+    .theme-toggle { flex: none; min-width: 104px; }
+
+    /* ---------- Hero (ui-kit 10.1 / 10.26) ---------- */
+    .hero { position: relative; overflow: hidden; margin-top: 24px; padding: 48px 44px; border-radius: var(--radius-2xl); border: 1px solid var(--color-border-subtle); box-shadow: var(--shadow-brand-sm);
+      background-color: var(--color-bg-surface);
+      background-image: linear-gradient(160deg, var(--color-bg-surface) 0%, var(--color-bg-surface-soft) 100%); }
+    .orb { position: absolute; width: 288px; height: 288px; border-radius: 50%; filter: blur(64px); pointer-events: none; animation: pulse-soft 6s ease-in-out infinite; }
+    .orb--a { top: -110px; right: -60px; background: var(--color-accent); opacity: .25; }
+    .orb--b { top: 30%; left: -140px; background: var(--color-primary); opacity: .20; animation-delay: 1.2s; }
+    .orb--c { bottom: -170px; right: 32%; background: var(--color-primary-strong); opacity: .15; animation-delay: 2.4s; }
+    @keyframes pulse-soft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    .hero__grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+    .hero h1 { margin: 14px 0 10px; font: 700 clamp(40px, 6vw, 60px)/1.04 var(--font-display); letter-spacing: -0.035em; }
+    .hero__statement { margin: 0 0 14px; font: 600 clamp(19px, 2.3vw, 24px)/1.3 var(--font-display); letter-spacing: var(--letter-spacing-tight); color: var(--color-text-primary); }
+    .text-gradient { background: linear-gradient(90deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-accent) 55%, var(--color-primary)) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero__description { max-width: 560px; color: var(--color-text-secondary); font-size: var(--font-size-md); }
+    .hero__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+    .stat-card { position: relative; padding: 18px 20px; border-radius: var(--radius-xl); border: 1px solid var(--color-border-subtle); background: color-mix(in srgb, var(--color-bg-surface-soft) 80%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+    .stat-card .eyebrow { margin-bottom: 10px; }
+    .stat-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--color-border-subtle); font-size: var(--font-size-xs); }
+    .stat-row:first-of-type { border-top: 0; }
+    .stat-row dt { color: var(--color-text-tertiary); font-weight: 600; }
+    .stat-row dd { margin: 0; color: var(--color-text-primary); }
+    .stat-row code { font-size: var(--font-size-xs); }
+
+    /* ---------- Pulse strip (ui-kit 10.2) ---------- */
+    .pulse-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+    .pulse-tile { display: flex; gap: 14px; align-items: center; padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); box-shadow: var(--shadow-brand-sm); }
+    .pulse-tile__icon { width: 36px; height: 36px; border-radius: var(--radius-md); display: grid; place-items: center; flex: none; color: var(--tile); background: color-mix(in srgb, var(--tile) 14%, transparent); }
+    .pulse-tile__icon svg { width: 18px; height: 18px; }
+    .pulse-tile__value { font: 700 var(--font-size-xl)/1.1 var(--font-display); color: var(--color-text-primary); }
+    .pulse-tile__label { font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); }
+    .pulse-tile__sub { font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+
+    /* ---------- Sections ---------- */
+    .section { padding-top: 56px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .section-heading h2 { margin-top: 8px; font: 600 clamp(24px, 3vw, 30px)/1.2 var(--font-display); letter-spacing: var(--letter-spacing-tight); }
+    .section-lede { max-width: 760px; margin: 10px 0 0; color: var(--color-text-secondary); font-size: var(--font-size-md); }
+    .section-aside { flex-shrink: 0; padding-bottom: 4px; color: var(--color-text-tertiary); font: 400 var(--font-size-xs)/1.5 var(--font-mono); }
+    .note { margin: 14px 0 0; font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+
+    /* ---------- Cards (ui-kit 6.2) ---------- */
+    .card { border-radius: var(--radius-lg); border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); box-shadow: var(--shadow-brand-sm); }
+    .card--lift { transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base); }
+    .card--lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-brand-md); border-color: color-mix(in srgb, var(--color-primary) 15%, var(--color-border-subtle)); }
+    .card--soft { border-radius: var(--radius-xl); border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-soft); }
+
+    /* ---------- Pill rows with a gliding cursor (ui-kit 10.24) ---------- */
+    .pills { position: relative; display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid transparent; background: transparent; color: var(--color-text-secondary); font: 600 var(--font-size-xs)/1.2 var(--font-body); cursor: pointer; transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, color 150ms ease, background 150ms ease; }
+    .pill:hover { background: var(--color-bg-surface); border-color: color-mix(in srgb, var(--color-border-subtle) 60%, transparent); transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0, 31, 186, 0.06); }
+    .pill:active { transform: none; box-shadow: none; }
+    .pill[aria-pressed="true"] { color: var(--on-accent); }
+    .pill[aria-pressed="true"]:hover { background: transparent; border-color: transparent; }
+    .pills:not(.has-cursor) .pill[aria-pressed="true"], .segmented:not(.has-cursor) .pill[aria-pressed="true"] { background: var(--color-accent); }
+    .pill-cursor { position: absolute; top: 0; left: 0; z-index: 0; border-radius: 999px; background: var(--color-accent); pointer-events: none; transition: transform 420ms var(--spring), width 420ms var(--spring), height 420ms var(--spring), opacity var(--transition-fast); }
+    .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dot); }
+    .segmented { position: relative; display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-soft); }
+    .segmented .pill { min-height: 28px; padding: 0 12px; }
+    .segmented .pill:hover { box-shadow: none; transform: none; }
+
+    /* ---------- Workflow board ---------- */
+    .workflow-board { padding: 0; overflow: hidden; border-radius: var(--radius-xl); }
+    .wf-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--color-border-subtle); background: color-mix(in srgb, var(--color-bg-tint) 40%, transparent); }
+    .wf-scroll-hint { display: none; margin: 0; padding: 12px 18px 0; color: var(--color-text-tertiary); font-size: var(--font-size-xs); }
+    .wf-canvas { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--color-border-strong) transparent; padding: 14px 12px 0; }
+    .wf-map { display: block; width: 100%; min-width: 1040px; height: auto; font-family: var(--font-body); }
+    .wf-node, .wf-edge, .wf-edge-label { transition: opacity var(--transition-base); }
+    .wf-node { cursor: pointer; color: var(--wf-flow); }
+    .wf-node:hover { text-decoration: none; }
+    .wf-node:focus { outline: none; box-shadow: none; }
+    .wf-node > rect { fill: var(--color-bg-surface); stroke: var(--color-border-strong); stroke-width: 1.2; transition: fill var(--transition-base), stroke var(--transition-base); }
+    .wf-node:hover > rect, .wf-node:focus-visible > rect, .wf-node.is-selected > rect { stroke: var(--wf-flow); stroke-width: 2; fill: color-mix(in srgb, var(--wf-flow) 7%, var(--color-bg-surface)); }
+    .wf-node.is-selected > rect { stroke-width: 2.4; filter: drop-shadow(0 8px 14px rgba(0, 31, 186, 0.12)); }
+    .wf-node--program { color: var(--wf-program); }
+    .wf-node--program > rect { stroke: color-mix(in srgb, var(--wf-program) 55%, var(--color-border-subtle)); }
+    .wf-node--program:hover > rect, .wf-node--program:focus-visible > rect, .wf-node--program.is-selected > rect { stroke: var(--wf-program); fill: color-mix(in srgb, var(--wf-program) 9%, var(--color-bg-surface)); }
+    .wf-node--support { color: var(--wf-support); }
+    .wf-node--support > rect { stroke: color-mix(in srgb, var(--wf-support) 60%, var(--color-border-subtle)); stroke-dasharray: 5 3; fill: color-mix(in srgb, var(--wf-support) 5%, var(--color-bg-surface)); }
+    .wf-node--support:hover > rect, .wf-node--support:focus-visible > rect, .wf-node--support.is-selected > rect { stroke: var(--wf-support); fill: color-mix(in srgb, var(--wf-support) 11%, var(--color-bg-surface)); }
+    .wf-node--unknown { color: var(--wf-unknown); }
+    .wf-node--unknown > rect { stroke: var(--wf-unknown); stroke-dasharray: 4 3; fill: color-mix(in srgb, var(--wf-unknown) 8%, var(--color-bg-surface)); }
+    .wf-node--unknown:hover > rect, .wf-node--unknown:focus-visible > rect, .wf-node--unknown.is-selected > rect { stroke: var(--wf-unknown); fill: color-mix(in srgb, var(--wf-unknown) 15%, var(--color-bg-surface)); }
+    .wf-node--setup > rect { fill: var(--color-bg-surface-soft); stroke-dasharray: 3 4; }
+    .has-route .wf-node:not(.is-muted) > rect { stroke: currentColor; fill: color-mix(in srgb, currentColor 7%, var(--color-bg-surface)); }
+    .wf-node.is-muted:not(.is-selected):not(:hover):not(:focus-visible) > rect { stroke: var(--color-border-subtle); fill: var(--color-bg-surface); }
+    .wf-node.is-muted:not(.is-selected):not(:hover):not(:focus-visible) text { fill: var(--color-text-tertiary); opacity: .7; }
+    .wf-program-frame { fill: color-mix(in srgb, var(--wf-program) 5%, var(--color-bg-surface)); stroke: color-mix(in srgb, var(--wf-program) 65%, var(--color-border-subtle)); stroke-dasharray: 6 4; }
+    .wf-stage-frame { fill: var(--color-bg-surface); stroke: var(--color-border-strong); stroke-width: 1.2; }
+    .wf-node.wf-subnode > rect { fill: transparent; stroke: transparent; }
+    .wf-node.wf-subnode:hover > rect, .wf-node.wf-subnode:focus-visible > rect, .wf-node.wf-subnode.is-selected > rect { fill: color-mix(in srgb, var(--wf-flow) 8%, transparent); stroke: var(--wf-flow); }
+    .wf-kicker { font: 500 11px var(--font-mono); letter-spacing: .8px; fill: var(--color-text-tertiary); }
+    .wf-heading { font: 700 18px var(--font-display); fill: var(--color-text-primary); }
+    .wf-skill { font: 500 14px var(--font-mono); fill: var(--ink-brand); }
+    .wf-body { font-size: 13px; fill: var(--color-text-secondary); }
+    .wf-artifact { font-size: 11.5px; font-weight: 600; fill: var(--color-text-primary); }
+    .wf-program-text { fill: color-mix(in srgb, var(--wf-program) 70%, var(--color-text-primary)); }
+    .wf-unknown-text { fill: color-mix(in srgb, var(--wf-unknown) 55%, var(--color-text-primary)); }
+    .wf-support-text { fill: color-mix(in srgb, var(--wf-support) 60%, var(--color-text-primary)); }
+    .wf-edge { fill: none; stroke: var(--wf-flow); stroke-width: 2; marker-end: url(#wf-arrow-main); }
+    .wf-edge--program { stroke: var(--wf-program); marker-end: url(#wf-arrow-program); }
+    .wf-edge--unknown { stroke: var(--wf-unknown); stroke-dasharray: 4 5; marker-end: url(#wf-arrow-unknown); }
+    .wf-edge--support { stroke: var(--wf-support); marker-end: url(#wf-arrow-support); }
+    .wf-edge--feedback { stroke: var(--wf-feedback); stroke-dasharray: 5 5; marker-end: url(#wf-arrow-feedback); }
+    .wf-edge.is-muted { opacity: .2; }
+    .wf-edge-label { font-size: 12px; fill: var(--color-text-secondary); }
+    .wf-edge-label.is-muted { opacity: .45; }
+    .wf-arrow--main { fill: var(--wf-flow); }
+    .wf-arrow--program { fill: var(--wf-program); }
+    .wf-arrow--unknown { fill: var(--wf-unknown); }
+    .wf-arrow--support { fill: var(--wf-support); }
+    .wf-arrow--feedback { fill: var(--wf-feedback); }
+    .wf-legend { display: flex; flex-wrap: wrap; gap: 10px 24px; padding: 10px 24px 18px; color: var(--color-text-secondary); font-size: var(--font-size-xs); }
+    .wf-legend span { display: inline-flex; align-items: center; gap: 8px; }
+    .wf-legend i { display: inline-block; width: 24px; height: 10px; border: 1.5px solid var(--wf-flow); border-radius: 4px; }
+    .wf-legend .program { border-color: var(--wf-program); border-style: dashed; border-radius: 8px; }
+    .wf-legend .support { border-color: var(--wf-support); border-style: dashed; }
+    .wf-legend .unknown { border-color: var(--wf-unknown); border-style: dotted; }
+    .wf-legend .feedback { height: 0; border: 0; border-top: 1.5px dashed var(--wf-feedback); border-radius: 0; }
+    .wf-route-summary { display: flex; gap: 16px; align-items: baseline; padding: 14px 22px; border-top: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-soft); }
+    .wf-route-summary strong { min-width: 110px; color: var(--ink-brand); font: 600 var(--font-size-sm)/1.4 var(--font-display); }
+    .wf-route-summary p { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+    .wf-inspector { display: grid; grid-template-columns: 1.12fr 1fr; gap: 28px; padding: 22px; border-top: 1px solid var(--color-border-subtle); }
+    .wf-inspector h3 { margin: 8px 0; font: 600 var(--font-size-xl)/1.25 var(--font-mono); letter-spacing: -0.02em; }
+    .wf-inspector p { margin: 0; color: var(--color-text-secondary); }
+    .wf-inspector dl { display: grid; grid-template-columns: 76px 1fr; gap: 8px; margin: 16px 0 0; font-size: var(--font-size-xs); }
+    .wf-inspector dt { color: var(--color-text-tertiary); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .wf-inspector dd { margin: 0; color: var(--color-text-primary); }
+    .wf-inspector .command-block { margin: 0 0 12px; min-height: 60px; align-items: center; }
+    .wf-command-label { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .wf-inspector-links { display: flex; justify-content: space-between; gap: 16px; font-size: var(--font-size-xs); font-weight: 600; }
+    .wf-text-alternative { padding: 14px 22px; border-top: 1px dashed var(--color-border-subtle); font-size: var(--font-size-sm); }
+    .wf-text-alternative summary { cursor: pointer; color: var(--color-text-secondary); font-weight: 600; }
+    .wf-text-alternative ul { display: grid; gap: 8px; margin: 14px 0 4px; padding-left: 18px; }
+    .wf-text-alternative li { color: var(--color-text-secondary); }
+    .wf-text-alternative strong { color: var(--color-text-primary); }
+
+    /* ---------- Catalog ---------- */
+    .catalog-controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+    .search { position: relative; flex: 1; max-width: 300px; min-width: 200px; }
+    .search svg { position: absolute; top: 50%; left: 13px; width: 16px; height: 16px; transform: translateY(-50%); color: var(--color-text-tertiary); pointer-events: none; transition: color var(--transition-fast); }
+    .search:focus-within svg { color: var(--ink-brand); }
+    .input { width: 100%; min-height: 40px; padding: 0 14px 0 38px; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); background: color-mix(in srgb, var(--color-bg-surface) 80%, transparent); color: var(--color-text-primary); font: 500 var(--font-size-sm)/1 var(--font-body); transition: border-color var(--transition-fast), box-shadow var(--transition-fast); }
+    .input::placeholder { color: var(--color-text-tertiary); }
+    .input:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 30%, transparent); border-radius: var(--radius-md); }
+    .catalog-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 0 0 18px; }
+    .result-count, .catalog-hint { margin: 0; color: var(--color-text-tertiary); font-size: var(--font-size-xs); font-weight: 600; }
+    .harness-control { display: flex; align-items: center; gap: 10px; color: var(--color-text-tertiary); font-size: var(--font-size-xs); font-weight: 600; }
+    .catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+    .skill-card { position: relative; min-width: 0; padding: 20px; scroll-margin-top: 84px; }
+    .skill-card[data-category="explore"] { --dot: var(--cat-explore); }
+    .skill-card[data-category="build"] { --dot: var(--cat-build); }
+    .skill-card[data-category="verify"] { --dot: var(--cat-verify); }
+    .skill-card[data-category="ship"] { --dot: var(--cat-ship); }
+    .skill-card[data-category="setup"] { --dot: var(--cat-setup); }
+    .skill-card:target { border-color: var(--color-accent); box-shadow: var(--shadow-brand-md), var(--focus-ring); }
+    .skill-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .skill-index { font: 500 var(--font-size-xs)/1 var(--font-mono); color: var(--color-text-tertiary); }
+    .skill-card h3 { font: 600 var(--font-size-md)/1.4 var(--font-mono); letter-spacing: -0.02em; color: var(--ink-brand); overflow-wrap: anywhere; }
+    .skill-summary { min-height: 66px; margin: 8px 0 14px; color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+    .skill-card dl { margin: 0 0 14px; font-size: var(--font-size-xs); }
+    .skill-card dt { margin-bottom: 4px; color: var(--color-text-tertiary); font-size: var(--font-size-xs); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .skill-card dd { margin: 0 0 12px; color: var(--color-text-primary); }
+    .skill-card dd.here { margin-bottom: 0; padding: 8px 10px; border-radius: var(--radius-sm); border-left: 2px solid var(--color-accent); background: var(--color-bg-surface-soft); color: var(--color-text-secondary); }
+    .skill-card dd.here code { font-size: var(--font-size-xs); }
+    .skill-card details { padding-top: 12px; border-top: 1px dashed var(--color-border-subtle); }
+    .skill-card summary { display: flex; align-items: center; justify-content: space-between; min-height: 26px; color: var(--ink-brand); font-size: var(--font-size-xs); font-weight: 700; cursor: pointer; list-style: none; }
+    .skill-card summary::-webkit-details-marker { display: none; }
+    .skill-card summary::after { content: '+'; font: 400 18px/1 var(--font-mono); }
+    .skill-card details[open] summary::after { content: '\2212'; }
+    .skill-details { padding-top: 12px; font-size: var(--font-size-xs); }
+    .skill-details p { color: var(--color-text-secondary); }
+    .command-block { display: flex; align-items: start; gap: 8px; margin: 12px 0; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface-soft); }
+    .command-block code { flex: 1; padding: 0; background: none; font-size: var(--font-size-xs); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--color-text-primary); }
+    .copy-btn { display: none; flex: none; }
+    .enhanced .copy-btn { display: inline-flex; }
+    .source-link { display: inline-flex; align-items: center; gap: 8px; font-size: var(--font-size-xs); font-weight: 700; }
+    .empty-state { padding: 36px; text-align: center; }
+    .empty-state h3 { font: 600 var(--font-size-lg)/1.3 var(--font-display); margin-bottom: 8px; }
+    .empty-state p { color: var(--color-text-secondary); margin-bottom: 16px; }
+
+    /* ---------- Recipes ---------- */
+    .recipes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .recipe-card { padding: 22px; }
+    .recipe-card h3 { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font: 600 var(--font-size-lg)/1.3 var(--font-display); }
+    .recipe-card h3 span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--radius-sm); background: var(--color-bg-tint); color: var(--ink-brand); font: 500 var(--font-size-xs)/1 var(--font-mono); }
+    .recipe-card > p { margin-bottom: 16px; color: var(--color-text-secondary); }
+    .recipe-path { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .recipe-path li { display: inline-flex; align-items: center; gap: 8px; font-size: var(--font-size-xs); }
+    .recipe-path li:not(:last-child)::after { content: '\2192'; color: var(--color-text-tertiary); }
+    .recipe-path a, .recipe-path .manual { padding: 5px 10px; border-radius: 999px; line-height: 1.3; }
+    .recipe-path a { background: var(--color-bg-tint); border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent); font-family: var(--font-mono); font-weight: 500; }
+    .recipe-path a:hover { text-decoration: none; background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-surface)); }
+    .recipe-path .manual { color: var(--color-text-tertiary); border: 1px dashed var(--color-border-strong); }
+
+    /* ---------- Use them here ---------- */
+    .split-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+    .split-grid > * { min-width: 0; }
+    .steps { display: grid; gap: 20px; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+    .steps > li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; counter-increment: step; }
+    .steps > li::before { content: counter(step, decimal-leading-zero); display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-accent) 60%, var(--color-border-subtle)); background: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg-surface)); color: var(--color-text-primary); font: 500 var(--font-size-xs)/1 var(--font-mono); }
+    .steps h3 { margin: 6px 0 6px; font: 600 var(--font-size-md)/1.3 var(--font-display); }
+    .steps p { margin: 0; color: var(--color-text-secondary); }
+    .tree-card { padding: 22px; }
+    .tree-card .eyebrow { margin-bottom: 14px; }
+    .tree-card pre { margin: 0; overflow: auto; font: 400 var(--font-size-xs)/1.85 var(--font-mono); color: var(--color-text-primary); }
+    .tree-card pre .c { color: var(--color-text-tertiary); }
+    .tree-card > p { margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed var(--color-border-subtle); font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+    .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); }
+    table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+    th { padding: 12px 16px; text-align: left; white-space: nowrap; background: var(--color-bg-surface-soft); color: var(--color-text-tertiary); font-size: var(--font-size-xs); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--color-border-subtle); }
+    td { padding: 12px 16px; vertical-align: top; border-bottom: 1px solid var(--color-border-subtle); color: var(--color-text-primary); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--color-bg-surface-soft) 60%, transparent); }
+    td code { font-size: var(--font-size-xs); }
+    .adopt-table { margin-top: 24px; }
+
+    /* ---------- Principles (action-tile vocabulary, ui-kit 10.3) ---------- */
+    .principles-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .principle { padding: 20px; }
+    .principle h3 { margin-bottom: 8px; font: 600 var(--font-size-md)/1.35 var(--font-display); }
+    .principle h3 span { display: block; margin-bottom: 10px; color: var(--ink-brand); font: 500 var(--font-size-xs)/1.5 var(--font-mono); letter-spacing: .04em; }
+    .principle p { margin: 0; color: var(--color-text-secondary); }
+
+    /* ---------- Keep them current ---------- */
+    .maintenance-card { padding: 26px; border-radius: var(--radius-xl); }
+    .maintenance-card h3 { margin-bottom: 10px; font: 600 var(--font-size-lg)/1.3 var(--font-display); }
+    .maintenance-card p { color: var(--color-text-secondary); }
+    .maintenance-card .command-block { align-items: center; margin-bottom: 14px; }
+    .maintenance-notes { display: grid; gap: 18px; }
+    .maintenance-notes > div { padding-left: 16px; border-left: 2px solid var(--color-accent); }
+    .maintenance-notes h3 { margin-bottom: 4px; font-size: var(--font-size-md); }
+    .maintenance-notes p { margin: 0; }
+    .locations { margin-top: 16px; padding: 18px 22px; }
+    .locations summary { cursor: pointer; font-weight: 700; color: var(--color-text-primary); }
+    .locations .table-wrap { margin-top: 16px; }
+
+    /* ---------- Footer and toasts ---------- */
+    .footer { margin-top: 64px; padding: 26px 0 34px; border-top: 1px solid var(--color-border-subtle); background: color-mix(in srgb, var(--color-bg-tint) 35%, transparent); color: var(--color-text-secondary); font-size: var(--font-size-xs); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .footer-brand { display: inline-flex; align-items: center; gap: 8px; font: 600 var(--font-size-sm)/1.3 var(--font-display); color: var(--color-text-primary); }
+    .footer-brand::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); }
+    .footer p { margin: 6px 0 0; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 16px; font-weight: 700; }
+    .toasts { position: fixed; right: 20px; bottom: 20px; z-index: 50; display: grid; gap: 8px; }
+    .toast { max-width: 340px; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); border-left: 3px solid var(--color-accent); background: var(--color-bg-surface); box-shadow: var(--shadow-brand-lg); color: var(--color-text-primary); font-size: var(--font-size-sm); animation: toast-in var(--transition-slow); }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+    .copy-fallback { margin: 0; max-width: 100%; font: 400 var(--font-size-xs)/1.5 var(--font-mono); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1140px) { .wf-scroll-hint { display: block; } }
+    @media (max-width: 1050px) {
+      .topbar__inner { gap: 16px; }
+      .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pulse-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero__grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    }
+    @media (max-width: 760px) {
+      html { scroll-padding-top: 120px; }
+      .container { padding: 0 16px; }
+      .topbar__inner { flex-wrap: wrap; gap: 4px 12px; padding-top: 8px; padding-bottom: 8px; }
+      .nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; margin: 0 -10px; }
+      .nav a { white-space: nowrap; }
+      .brand__realm { display: none; }
+      .hero { margin-top: 16px; padding: 32px 22px; border-radius: var(--radius-xl); }
+      .hero__description { font-size: var(--font-size-sm); }
+      .section { padding-top: 44px; }
+      .section-heading { display: block; }
+      .section-aside { display: none; }
+      .section-lede { font-size: var(--font-size-sm); }
+      .search { flex-basis: 100%; max-width: none; }
+      .catalog-grid { gap: 12px; }
+      .skill-card { padding: 18px; scroll-margin-top: 120px; }
+      .recipes-grid, .split-grid { grid-template-columns: minmax(0, 1fr); }
+      .principles-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .maintenance-card { padding: 20px; }
+      .wf-toolbar { padding: 14px 16px; }
+      .wf-canvas { padding: 8px 8px 0; }
+      .wf-map { min-width: 1100px; }
+      .wf-legend { padding: 12px 16px; gap: 9px 16px; }
+      .wf-route-summary { display: block; padding: 14px 16px; }
+      .wf-route-summary strong { display: block; margin-bottom: 4px; }
+      .wf-inspector { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 18px 16px; }
+      .wf-text-alternative { padding: 14px 16px; }
+    }
+    @media (max-width: 520px) {
+      .catalog-grid, .principles-grid, .pulse-strip { grid-template-columns: minmax(0, 1fr); }
+      .skill-summary { min-height: 0; }
+      .catalog-meta { align-items: start; }
+      .stat-row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+      .stat-row code { white-space: normal; overflow-wrap: anywhere; }
+      .theme-toggle { min-width: 0; }
+    }
+    @media (pointer: coarse) { .pill, .skill-card summary, .copy-btn { min-height: 42px; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    @media print {
+      .topbar, .hero__actions, .orb, .topbar__orb, .catalog-controls, .catalog-meta, .copy-btn, .toasts, .wf-toolbar, .wf-scroll-hint, .wf-inspector { display: none !important; }
+      .hero, .card, .card--soft, .pulse-tile { box-shadow: none; }
+      .section { padding-top: 24px; }
+      .skill-card, .recipe-card, .principle, .workflow-board { break-inside: avoid; }
+      .skill-card[hidden] { display: block !important; }
+      .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .wf-map { min-width: 0; }
+      .wf-canvas { overflow: visible; }
+      .wf-node.is-muted, .wf-edge.is-muted, .wf-edge-label.is-muted { opacity: 1; }
+      .footer { margin-top: 24px; }
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the guide</a>
+
+<header class="topbar">
+  <span class="topbar__orb" aria-hidden="true"></span>
+  <div class="container topbar__inner">
+    <a class="brand" href="#top" aria-label="Dev Skills, back to top">
+      <span class="logo" aria-hidden="true">D</span>
+      <span class="brand__text"><span class="brand__name">Dev Skills</span><span class="brand__realm">Governance repository</span></span>
+    </a>
+    <nav class="nav" aria-label="Guide sections">
+      <a href="#workflow">Workflow</a>
+      <a href="#catalog">Skills</a>
+      <a href="#recipes">Recipes</a>
+      <a href="#use">Use them here</a>
+      <a href="#maintain">Keep current</a>
+    </nav>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn--ghost btn--sm theme-toggle" data-theme-toggle hidden aria-label="Theme: system. Switch to light.">&#9680; System</button>
+  </div>
+</header>
+
+<div id="top" class="container">
+  <section class="hero" aria-labelledby="hero-title">
+    <span class="orb orb--a" aria-hidden="true"></span><span class="orb orb--b" aria-hidden="true"></span><span class="orb orb--c" aria-hidden="true"></span>
+    <div class="hero__grid">
+      <div>
+        <span class="eyebrow">Governance as code &middot; the delivery skills</span>
+        <h1 id="hero-title">Dev Skills</h1>
+        <p class="hero__statement">One workflow for people and agents, <span class="text-gradient">from idea to verified commit.</span></p>
+        <p class="hero__description">Explore an idea. Make a plan. Build, verify and deliver. Thirteen generic <code>dev-*</code> skills, shared by every agent tool that works in this repository. Its own <code>gov-*</code> skills are described in <a href="../../AGENTS.md">AGENTS.md</a>.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#catalog">Find the right skill <span aria-hidden="true">&darr;</span></a>
+          <a class="btn btn--secondary" href="#use">Use them here</a>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="eyebrow">Where they live</span>
+        <dl>
+          <div class="stat-row"><dt>Skills</dt><dd><code>.agents/skills/dev-*</code>, one folder for every agent tool</dd></div>
+          <div class="stat-row"><dt>Claude Code</dt><dd>Links in <code>.claude/skills/</code>, made by <code>tools/skills/link.py</code></dd></div>
+          <div class="stat-row"><dt>Upstream</dt><dd>The Dev Skills repository, named in <code>workspace.toml</code></dd></div>
+          <div class="stat-row"><dt>Rules</dt><dd><code>AGENTS.md</code>: output paths, review severity, what binds</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <div class="pulse-strip" aria-label="The skills at a glance">
+    <div class="pulse-tile" style="--tile: var(--phase-planning)">
+      <span class="pulse-tile__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg></span>
+      <div><div class="pulse-tile__value">13</div><div class="pulse-tile__label">dev-* skills</div><div class="pulse-tile__sub">generic, from upstream</div></div>
+    </div>
+    <div class="pulse-tile" style="--tile: var(--phase-routing)">
+      <span class="pulse-tile__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 12h3"/></svg></span>
+      <div><div class="pulse-tile__value">6</div><div class="pulse-tile__label">delivery stages</div><div class="pulse-tile__sub">explore &rarr; deliver</div></div>
+    </div>
+    <div class="pulse-tile" style="--tile: var(--phase-execution)">
+      <span class="pulse-tile__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m7 10 3 2-3 2M12 15h5"/></svg></span>
+      <div><div class="pulse-tile__value">3+</div><div class="pulse-tile__label">agent tools</div><div class="pulse-tile__sub">Claude Code, Codex, Copilot</div></div>
+    </div>
+    <div class="pulse-tile" style="--tile: var(--phase-synthesis)">
+      <span class="pulse-tile__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg></span>
+      <div><div class="pulse-tile__value">1</div><div class="pulse-tile__label">upstream source</div><div class="pulse-tile__sub">sync_upstream.py</div></div>
+    </div>
+  </div>
+</div>
+
+<main id="main" class="container">
+  <section id="workflow" class="section" aria-labelledby="workflow-title">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">01 &middot; The workflow</span>
+        <h2 id="workflow-title">From an open question to a verified change.</h2>
+        <p class="section-lede">The main flow moves a change toward delivery. The outer loop preserves program decisions; evidence and verification send the work back wherever it needs another pass.</p>
+      </div>
+      <span class="section-aside">explore &middot; build &middot; learn &middot; repeat</span>
+    </div>
+    <div class="card workflow-board" id="workflow-map">
+      <div class="wf-toolbar" data-enhanced hidden>
+        <span class="eyebrow">Follow a route</span>
+        <div class="pills" role="group" aria-label="Highlight a workflow route">
+          <button type="button" class="pill" data-wf-route="all" aria-pressed="true">All connections</button>
+          <button type="button" class="pill" data-wf-route="feature" aria-pressed="false">New feature</button>
+          <button type="button" class="pill" data-wf-route="program" aria-pressed="false">Program</button>
+          <button type="button" class="pill" data-wf-route="bug" aria-pressed="false">Bug fix</button>
+          <button type="button" class="pill" data-wf-route="release" aria-pressed="false">Release</button>
+        </div>
+      </div>
+      <p class="wf-scroll-hint">A connected map. Scroll sideways to explore it, or read the connections below. &harr;</p>
+      <div class="wf-canvas" tabindex="0" role="region" aria-label="Scrollable development workflow map">
+      <svg class="wf-map" viewBox="0 0 1344 672" xmlns="http://www.w3.org/2000/svg" role="group" aria-labelledby="wf-svg-title wf-svg-desc">
+        <title id="wf-svg-title">The Dev Skills development loop</title>
+        <desc id="wf-svg-desc">Explore, plan, build, test, verify, and deliver. Above: chart a program and return completed work to its decision ledger. Unknowns feed exploration. Below: a probe feeds investigation; debugging and refactoring support implementation; documentation audit supports verification. Findings return to implementation. Installation establishes readiness before work. Select a skill for details, or follow its link when JavaScript is unavailable.</desc>
+        <defs>
+          <marker id="wf-arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="wf-arrow--main" d="M0 0 10 5 0 10Z"/></marker>
+          <marker id="wf-arrow-program" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="wf-arrow--program" d="M0 0 10 5 0 10Z"/></marker>
+          <marker id="wf-arrow-unknown" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="wf-arrow--unknown" d="M0 0 10 5 0 10Z"/></marker>
+          <marker id="wf-arrow-support" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="wf-arrow--support" d="M0 0 10 5 0 10Z"/></marker>
+          <marker id="wf-arrow-feedback" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="wf-arrow--feedback" d="M0 0 10 5 0 10Z"/></marker>
+        </defs>
+        <rect x="224" y="24" width="884" height="120" rx="17" class="wf-program-frame"/>
+        <text x="248" y="49" class="wf-kicker wf-program-text">PROGRAM MAP  /  decisions that outlive a session</text>
+        <a href="#dev-map" class="wf-node wf-node--program" data-wf-node="chart" data-wf-routes="program" aria-label="Chart a program: destination, decision ledger, frontier, and unknowns">
+          <rect x="248" y="66" width="330" height="58" rx="12"/>
+          <text x="262" y="91" class="wf-skill wf-program-text">dev-map · chart</text>
+          <text x="262" y="111" class="wf-body">destination · ledger · frontier · unknowns</text>
+        </a>
+        <a href="#dev-map" class="wf-node wf-node--program" data-wf-node="work" data-wf-routes="program" aria-label="Work a program map: advance one ready frontier ticket and record actual resolution">
+          <rect x="606" y="66" width="478" height="58" rx="12"/>
+          <text x="620" y="91" class="wf-skill wf-program-text">dev-map · work</text>
+          <text x="620" y="111" class="wf-body">advance one ready ticket · record resolution · unblock the next</text>
+        </a>
+        <path d="M582 95H600" class="wf-edge wf-edge--program" data-wf-routes="program"/>
+        <a href="#dev-brainstorm" class="wf-node wf-node--unknown" data-wf-node="unknowns" data-wf-routes="program" aria-label="Known unknowns: choose exploration or a measured probe">
+          <rect x="20" y="38" width="174" height="106" rx="12"/>
+          <text x="34" y="61" class="wf-kicker wf-unknown-text">FOG OF WAR</text>
+          <text x="34" y="87" class="wf-heading">What’s unclear?</text>
+          <text x="34" y="110" class="wf-body">Name the uncertainty.</text>
+          <text x="34" y="129" class="wf-body">Choose an expedition.</text>
+        </a>
+        <path d="M104 148V201Q104 214 107 228L107 260" class="wf-edge wf-edge--unknown" data-wf-routes="program"/>
+        <text x="120" y="184" class="wf-edge-label" data-wf-routes="program">explore</text>
+        <text x="120" y="201" class="wf-edge-label" data-wf-routes="program">unknowns</text>
+        <path d="M314 128V260" class="wf-edge wf-edge--program" data-wf-routes="program"/>
+        <text x="328" y="204" class="wf-edge-label" data-wf-routes="program">chart feeds the roadmap</text>
+        <path d="M1217 260C1217 203 1318 198 1292 142S1162 96 1090 96" class="wf-edge wf-edge--program" data-wf-routes="program"/>
+        <text x="1070" y="189" class="wf-edge-label wf-program-text" data-wf-routes="program">record outcome</text>
+        <text x="1070" y="208" class="wf-edge-label wf-program-text" data-wf-routes="program">unblock the next ticket</text>
+        <a href="#dev-brainstorm" class="wf-node" data-wf-node="explore" data-wf-routes="feature program" aria-label="Explore with dev-brainstorm">
+          <rect x="20" y="268" width="174" height="148" rx="12"/>
+          <text x="34" y="290" class="wf-kicker">01 / EXPLORE</text>
+          <text x="34" y="320" class="wf-skill">dev-brainstorm</text>
+          <text x="34" y="347" class="wf-body">Compare framings.</text>
+          <text x="34" y="367" class="wf-body">Choose a direction.</text>
+          <text x="34" y="396" class="wf-artifact">→ exploration + decision</text>
+        </a>
+        <a href="#dev-plan" class="wf-node" data-wf-node="plan" data-wf-routes="feature program" aria-label="Plan with dev-plan">
+          <rect x="224" y="268" width="180" height="148" rx="12"/>
+          <text x="238" y="290" class="wf-kicker">02 / PLAN</text>
+          <text x="238" y="320" class="wf-skill">dev-plan</text>
+          <text x="238" y="347" class="wf-body">Roadmap → focused slices</text>
+          <text x="238" y="367" class="wf-body">Decisions + dependencies</text>
+          <text x="238" y="396" class="wf-artifact">→ implementable plan</text>
+        </a>
+        <a href="#dev-plan" class="wf-node" data-wf-node="build" data-wf-routes="feature program bug" aria-label="Implement a coherent increment with the assistant">
+          <rect x="434" y="268" width="174" height="148" rx="12"/>
+          <text x="448" y="290" class="wf-kicker">03 / BUILD</text>
+          <text x="448" y="320" class="wf-heading">you + the agent</text>
+          <text x="448" y="347" class="wf-body">Implement a coherent</text>
+          <text x="448" y="367" class="wf-body">increment in scope.</text>
+          <text x="448" y="396" class="wf-artifact">→ code + checks</text>
+        </a>
+        <a href="#dev-test-scope" class="wf-node" data-wf-node="test" data-wf-routes="feature program bug" aria-label="Test behavior with dev-test-scope">
+          <rect x="638" y="268" width="174" height="148" rx="12"/>
+          <text x="652" y="290" class="wf-kicker">04 / TEST</text>
+          <text x="652" y="320" class="wf-skill">dev-test-scope</text>
+          <text x="652" y="347" class="wf-body">Assess, add, strengthen.</text>
+          <text x="652" y="367" class="wf-body">Prove useful behavior.</text>
+          <text x="652" y="396" class="wf-artifact">→ meaningful checks</text>
+        </a>
+        <rect x="842" y="268" width="238" height="148" rx="12" class="wf-stage-frame"/>
+        <text x="856" y="290" class="wf-kicker">05 / VERIFY</text>
+        <a href="#dev-architecture-review" class="wf-node wf-subnode" data-wf-node="architecture" data-wf-routes="feature program bug" aria-label="Review architecture against repository rules">
+          <rect x="850" y="301" width="222" height="47" rx="12"/>
+          <text x="864" y="319" class="wf-skill">dev-architecture-review</text>
+          <text x="864" y="338" class="wf-body">code ↔ ratified ADRs + rules</text>
+        </a>
+        <a href="#dev-spec-verify" class="wf-node wf-subnode" data-wf-node="spec" data-wf-routes="feature program bug" aria-label="Verify implementation against atomic specification claims">
+          <rect x="850" y="357" width="222" height="47" rx="12"/>
+          <text x="864" y="375" class="wf-skill">dev-spec-verify</text>
+          <text x="864" y="394" class="wf-body">code ↔ PRD or plan claims</text>
+        </a>
+        <rect x="1110" y="268" width="214" height="148" rx="12" class="wf-stage-frame"/>
+        <text x="1124" y="290" class="wf-kicker">06 / DELIVER</text>
+        <a href="#dev-bump-version" class="wf-node wf-subnode" data-wf-node="release" data-wf-routes="release" aria-label="Prepare the version and release notes when a release is needed">
+          <rect x="1118" y="301" width="198" height="47" rx="12"/>
+          <text x="1132" y="319" class="wf-skill">dev-bump-version</text>
+          <text x="1132" y="338" class="wf-body">release preparation · when due</text>
+        </a>
+        <a href="#dev-group-and-commit" class="wf-node wf-subnode" data-wf-node="commit" data-wf-routes="feature program bug release" aria-label="Create coherent local commits with dev-group-and-commit">
+          <rect x="1118" y="357" width="198" height="47" rx="12"/>
+          <text x="1132" y="375" class="wf-skill">dev-group-and-commit</text>
+          <text x="1132" y="394" class="wf-body">coherent local commits</text>
+        </a>
+        <path d="M198 342H218" class="wf-edge" data-wf-routes="feature program"/>
+        <path d="M408 342H428" class="wf-edge" data-wf-routes="feature program"/>
+        <path d="M612 342H632" class="wf-edge" data-wf-routes="feature program bug"/>
+        <path d="M816 342H836" class="wf-edge" data-wf-routes="feature program bug"/>
+        <path d="M1084 342H1104" class="wf-edge" data-wf-routes="feature program bug"/>
+        <path d="M1300 349V355" class="wf-edge" data-wf-routes="release"/>
+        <path d="M960 421V438Q960 450 948 450H535Q521 450 521 436V422" class="wf-edge wf-edge--feedback" data-wf-routes="feature program bug"/>
+        <text x="673" y="472" class="wf-edge-label" data-wf-routes="feature program bug">findings → focused change → recheck</text>
+        <text x="20" y="527" class="wf-kicker">SUPPORTING TOOLS  /  enter where the work needs them</text>
+        <path d="M547 544V514Q547 501 535 491Q521 479 521 422" class="wf-edge wf-edge--support" data-wf-routes="program bug"/>
+        <path d="M789 544C789 501 586 516 571 422" class="wf-edge wf-edge--support" data-wf-routes="feature program"/>
+        <path d="M1098 544C1098 500 1015 487 1007 422" class="wf-edge wf-edge--support" data-wf-routes="feature program"/>
+        <a href="#dev-install" class="wf-node wf-node--setup" data-wf-node="install" data-wf-routes="setup" aria-label="Set up the checkout and verify local readiness">
+          <rect x="20" y="550" width="174" height="102" rx="12"/>
+          <text x="34" y="572" class="wf-kicker">BEFORE YOU START</text>
+          <text x="34" y="598" class="wf-skill">dev-install</text>
+          <text x="34" y="622" class="wf-body">Check → bootstrap</text>
+          <text x="34" y="640" class="wf-body">→ verified readiness</text>
+        </a>
+        <a href="#dev-dig" class="wf-node wf-node--support" data-wf-node="dig" data-wf-routes="program bug" aria-label="Measure a hypothesis with one diagnostic probe">
+          <rect x="220" y="550" width="196" height="102" rx="12"/>
+          <text x="234" y="572" class="wf-kicker wf-support-text">MEASURE</text>
+          <text x="234" y="598" class="wf-skill">dev-dig</text>
+          <text x="234" y="622" class="wf-body">One hypothesis. One probe.</text>
+          <text x="234" y="640" class="wf-artifact">→ recorded verdict</text>
+        </a>
+        <a href="#dev-debug" class="wf-node wf-node--support" data-wf-node="debug" data-wf-routes="program bug" aria-label="Investigate a symptom and produce an evidence-backed fix plan">
+          <rect x="448" y="550" width="196" height="102" rx="12"/>
+          <text x="462" y="572" class="wf-kicker wf-support-text">INVESTIGATE</text>
+          <text x="462" y="598" class="wf-skill">dev-debug</text>
+          <text x="462" y="622" class="wf-body">Symptom → cause + risks</text>
+          <text x="462" y="640" class="wf-artifact">→ fix plan</text>
+        </a>
+        <path d="M420 604H442" class="wf-edge wf-edge--support" data-wf-routes="program bug"/>
+        <a href="#dev-refactor-module" class="wf-node wf-node--support" data-wf-node="refactor" data-wf-routes="feature program" aria-label="Refactor one module while preserving its behavior">
+          <rect x="676" y="550" width="226" height="102" rx="12"/>
+          <text x="690" y="572" class="wf-kicker wf-support-text">IMPROVE</text>
+          <text x="690" y="598" class="wf-skill">dev-refactor-module</text>
+          <text x="690" y="622" class="wf-body">Clean up one module.</text>
+          <text x="690" y="640" class="wf-artifact">→ preserved behavior</text>
+        </a>
+        <a href="#dev-doc-audit" class="wf-node wf-node--support" data-wf-node="docs" data-wf-routes="feature program" aria-label="Reconcile documentation with current implementation">
+          <rect x="966" y="550" width="264" height="102" rx="12"/>
+          <text x="980" y="572" class="wf-kicker wf-support-text">RECONCILE</text>
+          <text x="980" y="598" class="wf-skill">dev-doc-audit</text>
+          <text x="980" y="622" class="wf-body">Audit claims, links, and coverage.</text>
+          <text x="980" y="640" class="wf-artifact">→ scoped documentation repairs</text>
+        </a>
+      </svg>
+      </div>
+      <div class="wf-legend" aria-label="Workflow legend">
+        <span><i></i>Delivery flow</span><span><i class="program"></i>Program loop</span><span><i class="support"></i>Supporting tools</span><span><i class="unknown"></i>Uncertainty</span><span><i class="feedback"></i>Verification feedback</span>
+      </div>
+      <div class="wf-route-summary" aria-live="polite" aria-atomic="true"><strong id="wf-route-title">All connections</strong><p id="wf-route-copy">A map of the available paths, not a mandatory checklist. Follow a route to see a typical sequence; select any node for its purpose, output, and example.</p></div>
+      <div class="wf-inspector" data-enhanced hidden aria-label="Selected workflow step">
+        <div aria-live="polite" aria-atomic="true">
+          <span id="wf-detail-kicker" class="eyebrow">Explore a direction</span>
+          <h3 id="wf-detail-title">dev-brainstorm</h3>
+          <p id="wf-detail-description">Compare viable framings against the repository, make the trade-offs explicit, and recommend one direction.</p>
+          <dl><dt>Produces</dt><dd id="wf-detail-output">An exploration document with open questions and an accepted-decision ledger.</dd><dt>Then</dt><dd id="wf-detail-next">Plan the chosen direction; use a program map if it spans several plans.</dd></dl>
+        </div>
+        <div>
+          <div class="wf-command-label"><span class="eyebrow eyebrow--plain">Try this step</span><div class="segmented" role="group" aria-label="Workflow command syntax"><button type="button" class="pill" data-harness="claude" aria-pressed="true">Claude /</button><button type="button" class="pill" data-harness="codex" aria-pressed="false">Codex $</button></div></div>
+          <div class="command-block"><code id="wf-command" data-command="dev-brainstorm add offline support to the dashboard">/dev-brainstorm add offline support to the dashboard</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="wf-command" aria-label="Copy selected workflow example">Copy</button></div>
+          <div class="wf-inspector-links"><a id="wf-detail-link" href="#dev-brainstorm" data-jump-skill>Open skill details &#8599;</a><a id="wf-next-link" href="#dev-plan" data-jump-skill>Next: plan &rarr;</a></div>
+        </div>
+      </div>
+      <details class="wf-text-alternative">
+        <summary>Read the connections in plain language</summary>
+        <ul>
+          <li><strong>Core flow:</strong> brainstorm a direction → plan → implement → test → check architecture and requirements → prepare release changes when needed → commit.</li>
+          <li><strong>Program loop:</strong> chart a destination, ledger, frontier, and unknowns. Work one ready ticket through its appropriate workflow; record actual resolution and unblock dependent work. A handoff alone is not a completed ticket.</li>
+          <li><strong>Uncertainty:</strong> explore an unclear area with brainstorm; use dig once there is a falsifiable question worth measuring. Probe evidence can feed a broader debug investigation.</li>
+          <li><strong>Support:</strong> debugging provides a cause and fix plan; refactoring improves the selected module; documentation audit repairs drift. Installation establishes local readiness before work.</li>
+          <li><strong>Feedback:</strong> failed checks and verified gaps return to a focused implementation change, then rechecking. Scope determines which reviews are useful.</li>
+          <li><strong>Release:</strong> bump-version prepares a consistent release diff before the release commit. Tagging, publication, and deployment follow the repository's separate procedure when requested.</li>
+        </ul>
+      </details>
+    </div>
+    <p class="note">These are entry points, not mandatory gates. Testing, release policy and scope come from <a href="../../AGENTS.md">AGENTS.md</a> and your request.</p>
+  </section>
+
+  <section id="catalog" class="section" aria-labelledby="catalog-title">
+    <div class="section-heading">
+      <div><span class="eyebrow">02 &middot; The skill catalog</span><h2 id="catalog-title">Choose your next move.</h2><p class="section-lede">Each skill has a clear job. The card says what it produces and how this repository shapes it; open the details for an example and the full instructions.</p></div>
+      <span class="section-aside">.agents/skills/dev-*</span>
+    </div>
+    <div class="catalog-controls" data-enhanced hidden>
+      <div class="pills" role="group" aria-label="Filter skills by workflow">
+        <button type="button" class="pill" data-filter="all" aria-pressed="true">All skills</button>
+        <button type="button" class="pill" data-filter="explore" aria-pressed="false" style="--dot: var(--cat-explore)"><span class="dot" aria-hidden="true"></span>Explore &amp; plan</button>
+        <button type="button" class="pill" data-filter="build" aria-pressed="false" style="--dot: var(--cat-build)"><span class="dot" aria-hidden="true"></span>Investigate &amp; build</button>
+        <button type="button" class="pill" data-filter="verify" aria-pressed="false" style="--dot: var(--cat-verify)"><span class="dot" aria-hidden="true"></span>Test &amp; verify</button>
+        <button type="button" class="pill" data-filter="ship" aria-pressed="false" style="--dot: var(--cat-ship)"><span class="dot" aria-hidden="true"></span>Deliver</button>
+        <button type="button" class="pill" data-filter="setup" aria-pressed="false" style="--dot: var(--cat-setup)"><span class="dot" aria-hidden="true"></span>Set up</button>
+      </div>
+      <div class="search">
+        <label class="sr-only" for="skill-search">Search skills by name, purpose, or example</label>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <input class="input" type="search" id="skill-search" placeholder="Search skills…" autocomplete="off">
+      </div>
+    </div>
+    <div class="catalog-meta">
+      <p id="result-count" class="result-count" role="status" aria-live="polite" aria-atomic="true">13 of 13 skills</p>
+      <div class="harness-control" data-enhanced hidden>
+        <span>Examples for</span>
+        <div class="segmented" role="group" aria-label="Command syntax">
+          <button type="button" class="pill" data-harness="claude" aria-pressed="true">Claude Code /</button>
+          <button type="button" class="pill" data-harness="codex" aria-pressed="false">Codex $</button>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="catalog-hint">All skills are shown below. Examples use Claude Code’s slash syntax; for Codex, replace the leading slash with <code>$</code>.</p></noscript>
+    <div id="skill-catalog" class="catalog-grid">
+      <article id="dev-brainstorm" class="card card--lift skill-card" data-category="explore">
+        <div class="skill-top"><span class="eyebrow">Explore a direction</span><span class="skill-index">01</span></div>
+        <h3>dev-brainstorm</h3>
+        <p class="skill-summary">Explore a rough idea against the repository, compare viable framings, and recommend one direction with its trade-offs and unresolved questions.</p>
+        <dl><dt>Produces</dt><dd>A repository-grounded brainstorm with three to five framings, one recommendation, a decision ledger, and a concrete next step.</dd><dt>In this repo</dt><dd class="here"><code>resources/work/brainstorms/&lt;YYYY-MM&gt;/&lt;slug&gt;/</code>, citing the PRD ids it serves.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Accepts a new idea or an existing brainstorm to refine. It asks three to seven questions, cross-checks the repository, and explores at least three framings with industry references. You approve the framings and recommendation in chat before anything is written. Refinements append a dated update. The brainstorm chooses a direction; implementation phases belong in a plan.</p>
+            <div class="command-block"><code id="cmd-dev-brainstorm" data-command="dev-brainstorm add offline support to the dashboard">/dev-brainstorm add offline support to the dashboard</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-brainstorm" aria-label="Copy dev-brainstorm example">Copy</button></div>
+            <a class="source-link" href="dev-brainstorm/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-map" class="card card--lift skill-card" data-category="explore">
+        <div class="skill-top"><span class="eyebrow">Coordinate a program</span><span class="skill-index">02</span></div>
+        <h3>dev-map</h3>
+        <p class="skill-summary">Chart a program spanning several plans, preserving decisions, dependencies, and unresolved areas between sessions.</p>
+        <dl><dt>Produces</dt><dd>A MAP.md with destination, arrival criteria, append-only decision ledger, typed frontier, and unresolved areas.</dd><dt>In this repo</dt><dd class="here"><code>resources/work/plans/&lt;program&gt;/MAP.md</code>, across plans and product repositories.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Use chart to create or redraw the map, with its outline approved in chat before it is written; an existing map otherwise defaults to work. Work resolves exactly one frontier ticket per session, posts the delta, and stops. Decisions are made there; other ticket types get a prepared handoff, and the outcome is recorded in a later session. Reversals append a superseding row. A single roadmap needs no program map.</p>
+            <div class="command-block"><code id="cmd-dev-map" data-command="dev-map platform-modernization chart">/dev-map platform-modernization chart</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-map" aria-label="Copy dev-map example">Copy</button></div>
+            <a class="source-link" href="dev-map/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-plan" class="card card--lift skill-card" data-category="explore">
+        <div class="skill-top"><span class="eyebrow">Plan the work</span><span class="skill-index">03</span></div>
+        <h3>dev-plan</h3>
+        <p class="skill-summary">Turn an idea into a phased roadmap, or refine one phase into a sub-plan you can ship in one session, with locked decisions, tests, and documentation built in.</p>
+        <dl><dt>Produces</dt><dd>A phased roadmap, a ship-in-one-session sub-plan per phase, and a STATUS.md marker as the work lands.</dd><dt>In this repo</dt><dd class="here"><code>resources/work/plans/&lt;YYYY-MM&gt;/&lt;slug&gt;/</code>, with <code>STATUS.md</code> and <code>phases/</code>, citing the PRD ids it serves.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>It asks three to seven questions, reads the code, then shows the locked decisions and outline in chat. Nothing is written until you approve. Run it again on a roadmap to expand one phase into a sub-plan under phases/, in the parent’s original month bucket. A sibling STATUS.md marks the plan in progress, done, or superseded. It never implements or commits; you choose when.</p>
+            <div class="command-block"><code id="cmd-dev-plan" data-command="dev-plan add an export endpoint">/dev-plan add an export endpoint</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-plan" aria-label="Copy dev-plan example">Copy</button></div>
+            <a class="source-link" href="dev-plan/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-debug" class="card card--lift skill-card" data-category="build">
+        <div class="skill-top"><span class="eyebrow">Investigate a failure</span><span class="skill-index">04</span></div>
+        <h3>dev-debug</h3>
+        <p class="skill-summary">Turn a vague symptom into ranked hypotheses, evidence, a supported cause, and a fix plan with checks for adjacent risks.</p>
+        <dl><dt>Produces</dt><dd>An investigation and fix plan, or a precise account of remaining uncertainty and the next required evidence.</dd><dt>In this repo</dt><dd class="here"><code>resources/work/debug/&lt;slug&gt;/&lt;slug&gt;.md</code></dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Rank at least three falsifiable hypotheses, then confirm or rule out each one with code, logs, tests, and history. Every fix plan includes adjacent risks and a copy-paste verification recipe. You see a summary in chat before the document is written. Refinements append dated updates. Trivial fixes skip the document, structural ones hand off to a plan, and the skill never applies the fix itself.</p>
+            <div class="command-block"><code id="cmd-dev-debug" data-command="dev-debug requests time out intermittently after reconnecting">/dev-debug requests time out intermittently after reconnecting</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-debug" aria-label="Copy dev-debug example">Copy</button></div>
+            <a class="source-link" href="dev-debug/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-dig" class="card card--lift skill-card" data-category="build">
+        <div class="skill-top"><span class="eyebrow">Measure one question</span><span class="skill-index">05</span></div>
+        <h3>dev-dig</h3>
+        <p class="skill-summary">Run one bounded diagnostic probe to turn a surprising metric into a measured fact and a useful next question.</p>
+        <dl><dt>Produces</dt><dd>A recorded hypothesis, measurement, evidence, verdict, and a mandatory next probe.</dd><dt>In this repo</dt><dd class="here">On the owning record, or an investigation in <code>resources/work/debug/</code>.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Choose the cheapest measurement that could kill one hypothesis, working through the repository’s own census, trace, eval, configuration, and cost tools. Record the numbers and exact command on the owning ticket or document. Default-off instrumentation may be added while preserving behavior; fixes are separate work. Finish with confirmed, killed, or needs a bigger instrument, then name the next probe: no probe is a leaf.</p>
+            <div class="command-block"><code id="cmd-dev-dig" data-command="dev-dig cache hit rate stayed flat after the key change">/dev-dig cache hit rate stayed flat after the key change</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-dig" aria-label="Copy dev-dig example">Copy</button></div>
+            <a class="source-link" href="dev-dig/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-refactor-module" class="card card--lift skill-card" data-category="build">
+        <div class="skill-top"><span class="eyebrow">Improve a module</span><span class="skill-index">06</span></div>
+        <h3>dev-refactor-module</h3>
+        <p class="skill-summary">Apply focused quality passes to a module or folder using the repository’s language, framework, and tooling while preserving behavior.</p>
+        <dl><dt>Produces</dt><dd>Scoped code improvements, a file-by-file change report, verification results, and any deferred passes.</dd><dt>In this repo</dt><dd class="here">In a product repository, run GitNexus <code>impact</code> on a symbol before you change it.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Keep edits inside the selected folder and run ten ordered passes: typing, model migration, logging, docstrings, imports, field descriptions, deduplication, error handling, configuration, and helper reuse. The passes are written for Python; other languages apply each pass’s intent, and a pass with no equivalent is marked N/A. Reuse the repository’s shared helpers before extracting new ones, and do not introduce a new configuration system.</p>
+            <div class="command-block"><code id="cmd-dev-refactor-module" data-command="dev-refactor-module src/payments">/dev-refactor-module src/payments</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-refactor-module" aria-label="Copy dev-refactor-module example">Copy</button></div>
+            <a class="source-link" href="dev-refactor-module/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-test-scope" class="card card--lift skill-card" data-category="verify">
+        <div class="skill-top"><span class="eyebrow">Strengthen coverage</span><span class="skill-index">07</span></div>
+        <h3>dev-test-scope</h3>
+        <p class="skill-summary">Assess observable behavior in a selected code area, then add or strengthen tests that detect meaningful regressions.</p>
+        <dl><dt>Produces</dt><dd>New and strengthened tests, and a per-file report of functions tested, added, and enhanced.</dd><dt>In this repo</dt><dd class="here">The tools’ tests run with <code>py -3.12 -m unittest discover -s tests</code>.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Accepts a path, component description, or uncommitted changes. Inventory public functions as tested or untested, assess the quality of existing tests, then add or strengthen them. Mock external boundaries only, skip trivial getters, and fix a failing test rather than the source unless the source has a real bug. Examples use Python and pytest; other stacks use the repository’s own framework.</p>
+            <div class="command-block"><code id="cmd-dev-test-scope" data-command="dev-test-scope uncommitted">/dev-test-scope uncommitted</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-test-scope" aria-label="Copy dev-test-scope example">Copy</button></div>
+            <a class="source-link" href="dev-test-scope/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-architecture-review" class="card card--lift skill-card" data-category="verify">
+        <div class="skill-top"><span class="eyebrow">Check architecture</span><span class="skill-index">08</span></div>
+        <h3>dev-architecture-review</h3>
+        <p class="skill-summary">Review code against the repository’s documented architecture, boundaries, contracts, and conventions, with evidence for every claimed rule violation.</p>
+        <dl><dt>Produces</dt><dd>Source-cited findings with severity, code locations, specific corrections, and review coverage limits.</dd><dt>In this repo</dt><dd class="here">Findings come only from <code>VISION-RATIFIED</code> ADRs; a known deviation is reported as <code>known: DEV-xxx</code>.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Accepts a path, PR or MR reference, staged changes, or uncommitted work by default. Discover architecture documents, rules, ADRs, and lint gates first, using the bundled scanner or manual discovery. Every finding cites the rule it breaks, and the repository’s own ADR statuses, deviation register, and severity scale apply. Here, <code>DRAFT</code> ADRs give advisory notes, new deviations are proposed rather than written, and the severity scale is the one in AGENTS.md. This is a review, not a fix.</p>
+            <div class="command-block"><code id="cmd-dev-architecture-review" data-command="dev-architecture-review --staged">/dev-architecture-review --staged</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-architecture-review" aria-label="Copy dev-architecture-review example">Copy</button></div>
+            <a class="source-link" href="dev-architecture-review/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-spec-verify" class="card card--lift skill-card" data-category="verify">
+        <div class="skill-top"><span class="eyebrow">Close the spec loop</span><span class="skill-index">09</span></div>
+        <h3>dev-spec-verify</h3>
+        <p class="skill-summary">Check a plan, PRD, audit, or written requirement against implementation using atomic claims and evidence-backed verdicts.</p>
+        <dl><dt>Produces</dt><dd>A claim-by-claim verdict table, a focused real-gaps list, and summary totals.</dd><dt>In this repo</dt><dd class="here">Against the PRD mirror in <code>prd/</code> or a plan; the report goes to <code>resources/audits/</code>.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Exactly one verdict per atomic claim: IMPLEMENTED, PARTIAL, MISSING, or DEFERRED. Better-than-spec is not a gap. Every verdict cites evidence, and MISSING cites where it was expected. Only the specification can defer a claim. The audit recommends no new work and never edits the specification; updating STATUS.md is your call.</p>
+            <div class="command-block"><code id="cmd-dev-spec-verify" data-command="dev-spec-verify resources/work/plans/2026-11/export/export.md">/dev-spec-verify resources/work/plans/2026-11/export/export.md</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-spec-verify" aria-label="Copy dev-spec-verify example">Copy</button></div>
+            <a class="source-link" href="dev-spec-verify/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-doc-audit" class="card card--lift skill-card" data-category="verify">
+        <div class="skill-top"><span class="eyebrow">Reconcile documentation</span><span class="skill-index">10</span></div>
+        <h3>dev-doc-audit</h3>
+        <p class="skill-summary">Check living documentation against current code, verify claims and links, identify coverage gaps, and make scoped repairs.</p>
+        <dl><dt>Produces</dt><dd>Corrected documentation plus evidence-backed findings, verification results, deferred gaps, and scope limits.</dd><dt>In this repo</dt><dd class="here">Report in <code>resources/audits/</code>. The PRD mirror is generated: it is never edited.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Default invocation runs three audit passes, plans five workstreams, and lands source-of-truth fixes first so later docs can cite them. Use --no-write for the plan only, or --source-of-truth-only for contributor entry points, architecture docs, and rules. Scope by path or topic when useful. Patch rather than rewrite, verify every claim against current code, and keep new files under about 400 lines.</p>
+            <div class="command-block"><code id="cmd-dev-doc-audit" data-command="dev-doc-audit authentication --no-write">/dev-doc-audit authentication --no-write</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-doc-audit" aria-label="Copy dev-doc-audit example">Copy</button></div>
+            <a class="source-link" href="dev-doc-audit/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-group-and-commit" class="card card--lift skill-card" data-category="ship">
+        <div class="skill-top"><span class="eyebrow">Commit coherent changes</span><span class="skill-index">11</span></div>
+        <h3>dev-group-and-commit</h3>
+        <p class="skill-summary">Organize authorized local changes into small, logical commits with concise messages while preserving unrelated work and existing staging.</p>
+        <dl><dt>Produces</dt><dd>Local commits, their hashes and subjects, completed checks, and a report of remaining changes.</dd><dt>In this repo</dt><dd class="here">Only when asked, once the tests pass. It never pushes.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Group changes by intent, usually three to eight commits, and stage explicit paths or reviewed patches. Existing staging is never reset, and hunks are never hidden by reverting them. The batch is not done until a mandatory CI-parity gate passes: the same gates CI runs, against the full tree. Hooks are never skipped, messages carry no AI attribution, and pushing is a separate, explicitly requested step.</p>
+            <div class="command-block"><code id="cmd-dev-group-and-commit" data-command="dev-group-and-commit">/dev-group-and-commit</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-group-and-commit" aria-label="Copy dev-group-and-commit example">Copy</button></div>
+            <a class="source-link" href="dev-group-and-commit/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-bump-version" class="card card--lift skill-card" data-category="ship">
+        <div class="skill-top"><span class="eyebrow">Prepare a release</span><span class="skill-index">12</span></div>
+        <h3>dev-bump-version</h3>
+        <p class="skill-summary">Move the version forward one validated step, refusing jumps and backward moves, and keep the changelog and every version file in agreement.</p>
+        <dl><dt>Produces</dt><dd>A reviewable release diff and a suggested commit. It never commits, tags, or pushes.</dd><dt>In this repo</dt><dd class="here">The version is in <code>pyproject.toml</code>, with no documented cadence: one patch per request.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Discover the version files, changelog, generator, and any documented cadence. With a cadence, it takes every due window and rejects other targets with a message showing the natural next version; now forces a hotfix. With none, it bumps one patch on request, and minor or major only when you name them. Existing changelog entries are never re-dated.</p>
+            <div class="command-block"><code id="cmd-dev-bump-version" data-command="dev-bump-version now">/dev-bump-version now</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-bump-version" aria-label="Copy dev-bump-version example">Copy</button></div>
+            <a class="source-link" href="dev-bump-version/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+
+      <article id="dev-install" class="card card--lift skill-card" data-category="setup">
+        <div class="skill-top"><span class="eyebrow">Prepare the checkout</span><span class="skill-index">13</span></div>
+        <h3>dev-install</h3>
+        <p class="skill-summary">Discover a repository’s development setup, bootstrap the required local environment, and verify its documented readiness checks.</p>
+        <dl><dt>Produces</dt><dd>A verified local setup or readiness audit, with a rollback summary of everything installed.</dd><dt>In this repo</dt><dd class="here">Python 3.12+, pandoc 3+ and git.</dd></dl>
+        <details>
+          <summary>Example &amp; details</summary>
+          <div class="skill-details">
+            <p>Full setup audits prerequisites, asks before every install with a gentle option, an alternative, and a skip path, walks .env section by section, starts the documented local target, and smoke-tests it. You type credentials into .env yourself; the skill reports only whether each is set. Use check for a read-only audit; deps-only, env-only, and stack-only limit the work; smoketest only verifies a running target. It ends by listing every uninstall command.</p>
+            <div class="command-block"><code id="cmd-dev-install" data-command="dev-install check">/dev-install check</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="cmd-dev-install" aria-label="Copy dev-install example">Copy</button></div>
+            <a class="source-link" href="dev-install/SKILL.md">Read skill definition <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </details>
+      </article>
+    </div>
+    <div id="empty-state" class="card empty-state" hidden>
+      <h3>No matching skills.</h3>
+      <p>Try a shorter phrase or clear the workflow filter.</p>
+      <button type="button" id="reset-search" class="btn btn--secondary">Show all skills</button>
+    </div>
+  </section>
+
+  <section id="recipes" class="section" aria-labelledby="recipes-title">
+    <div class="section-heading"><div><span class="eyebrow">03 &middot; Practical recipes</span><h2 id="recipes-title">A few ways to put them together.</h2><p class="section-lede">Use a recipe as a starting point. Linked steps open the relevant skill; plain steps show implementation work, intermediate outcomes, or handoffs.</p></div></div>
+    <div class="recipes-grid">
+      <article class="card recipe-card">
+        <h3><span>01</span> Build a feature</h3>
+        <p>Explore when the direction is open, then plan a useful increment. Check both its behavior and its fit with the design.</p>
+        <ol class="recipe-path">
+          <li><a href="#dev-brainstorm" data-jump-skill>brainstorm</a></li><li><a href="#dev-plan" data-jump-skill>plan / refine</a></li><li><span class="manual">implement</span></li><li><a href="#dev-test-scope" data-jump-skill>test-scope</a></li><li><a href="#dev-architecture-review" data-jump-skill>architecture-review</a></li><li><a href="#dev-spec-verify" data-jump-skill>spec-verify</a></li><li><a href="#dev-doc-audit" data-jump-skill>doc-audit, if needed</a></li><li><a href="#dev-group-and-commit" data-jump-skill>group-and-commit</a></li>
+        </ol>
+      </article>
+      <article class="card recipe-card">
+        <h3><span>02</span> Steer a larger program</h3>
+        <p>Keep decisions across plans and sessions. A handoff stays open until the work produces the evidence needed to resolve it.</p>
+        <ol class="recipe-path"><li><a href="#dev-map" data-jump-skill>map · chart</a></li><li><a href="#dev-map" data-jump-skill>map · work</a></li><li><span class="manual">resolve one ready ticket</span></li><li><span class="manual">record + unblock</span></li></ol>
+      </article>
+      <article class="card recipe-card">
+        <h3><span>03</span> Investigate a bug</h3>
+        <p>Establish the cause and adjacent risks first. Then request the fix and verify the behavior that originally failed.</p>
+        <ol class="recipe-path"><li><a href="#dev-debug" data-jump-skill>debug</a></li><li><span class="manual">implement the fix</span></li><li><a href="#dev-test-scope" data-jump-skill>test-scope</a></li><li><a href="#dev-group-and-commit" data-jump-skill>group-and-commit</a></li></ol>
+      </article>
+      <article class="card recipe-card">
+        <h3><span>04</span> Explain a surprising metric</h3>
+        <p>Turn a suspicion into one falsifiable measurement. A negative result is useful: it eliminates an explanation.</p>
+        <ol class="recipe-path"><li><a href="#dev-dig" data-jump-skill>dig</a></li><li><span class="manual">record the verdict</span></li><li><span class="manual">next probe</span></li><li><span class="manual">implement if warranted</span></li></ol>
+      </article>
+      <article class="card recipe-card">
+        <h3><span>05</span> Bring the docs up to date</h3>
+        <p>The audit includes scoped repairs. Add <code>--no-write</code> for a findings-only pass, or name a topic to narrow it.</p>
+        <ol class="recipe-path"><li><a href="#dev-doc-audit" data-jump-skill>doc-audit</a></li><li><span class="manual">inspect the diff</span></li><li><a href="#dev-group-and-commit" data-jump-skill>group-and-commit</a></li></ol>
+      </article>
+      <article class="card recipe-card">
+        <h3><span>06</span> Prepare a release</h3>
+        <p>Follow the repository’s version model. Preparation updates the release diff; tagging and publication follow when requested.</p>
+        <ol class="recipe-path"><li><a href="#dev-bump-version" data-jump-skill>bump-version</a></li><li><span class="manual">validate the release diff</span></li><li><a href="#dev-group-and-commit" data-jump-skill>group-and-commit</a></li><li><span class="manual">release procedure</span></li></ol>
+      </article>
+    </div>
+  </section>
+
+  <section id="use" class="section" aria-labelledby="use-title">
+    <div class="section-heading"><div><span class="eyebrow">04 &middot; Use them here</span><h2 id="use-title">One folder. Every agent tool.</h2><p class="section-lede">The skills are generic; this repository’s conventions live in <a href="../../AGENTS.md">AGENTS.md</a>. Each skill reads them there: where its output lands, which ADRs bind, how severe a finding is.</p></div></div>
+    <div class="split-grid">
+      <ol class="steps">
+        <li><div><h3>Open the repository in your agent.</h3><p>Codex, Copilot and other <code>AGENTS.md</code> readers load the skills from <code>.agents/skills/</code> directly. Any other agent can read <code>.agents/skills/&lt;name&gt;/SKILL.md</code> as plain instructions.</p></div></li>
+        <li><div><h3>Claude Code: link them once.</h3><p>Claude Code reads only <code>.claude/skills/</code>, which is gitignored. Run <code>py -3.12 tools/skills/link.py</code> after cloning, and again after a skill is added or removed. A second run changes nothing.</p></div></li>
+        <li><div><h3>Give the agent a concrete task.</h3><p>Invoke a skill with a path, a symptom or a goal. Planning and setup skills ask their questions, then wait for your approval before they write a document or install anything. Nothing is committed or pushed unless you ask.</p></div></li>
+      </ol>
+      <div class="card--soft tree-card">
+        <span class="eyebrow">Inside this repository</span>
+        <pre aria-label="Where the skills live in this repository">project-gov/
+├── AGENTS.md                  <span class="c">the rules, "Where things land"</span>
+├── CLAUDE.md                  <span class="c">imports AGENTS.md</span>
+├── .agents/skills/
+│   ├── skills-guide.html      <span class="c">this page</span>
+│   ├── dev-plan/
+│   │   ├── SKILL.md
+│   │   └── references/plans-readme.md
+│   ├── dev-architecture-review/
+│   │   ├── SKILL.md
+│   │   └── scripts/discover_context.py
+│   └── gov-*/                 <span class="c">this repository's own skills</span>
+├── .claude/skills/            <span class="c">links, made by link.py (local)</span>
+└── resources/
+    ├── work/                  <span class="c">brainstorms, plans, debug</span>
+    └── audits/                <span class="c">reviews and audits</span></pre>
+        <p>One set serves every tool: there is no second copy to keep in step. The <code>gov-*</code> skills sit in the same folder and are covered in AGENTS.md.</p>
+      </div>
+    </div>
+    <div class="table-wrap adopt-table">
+      <table>
+        <caption class="sr-only">How each agent tool invokes a skill and where it reads skills from</caption>
+        <thead><tr><th scope="col">Agent tool</th><th scope="col">Example invocation</th><th scope="col">Reads skills from</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Code</td><td><code>/dev-plan add an export endpoint</code></td><td><code>.claude/skills/</code>, links to <code>.agents/skills/</code></td></tr>
+          <tr><td>Codex</td><td><code>$dev-plan add an export endpoint</code></td><td><code>.agents/skills/</code></td></tr>
+          <tr><td>GitHub Copilot</td><td>Name the skill: “use dev-plan to add an export endpoint”</td><td><code>.agents/skills/</code>, with <code>.github/copilot-instructions.md</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The optional architecture discovery helper needs Python 3.9+; this repository’s own tools need Python 3.12+. Other requirements come from the project being worked on.</p>
+  </section>
+
+  <section id="principles" class="section" aria-labelledby="principles-title">
+    <div class="section-heading"><div><span class="eyebrow">05 &middot; Why this works</span><h2 id="principles-title">A workflow that remembers its reasoning.</h2><p class="section-lede">The useful part travels with you: explicit decisions, evidence, and focused work. The project-specific rules stay with the project.</p></div></div>
+    <div class="principles-grid">
+      <article class="card card--lift principle"><h3><span>01 / CONTEXT</span>Discover before prescribing.</h3><p>Architecture, frameworks, tools, and release policy are inputs. A skill reads them instead of imposing another repository’s conventions.</p></article>
+      <article class="card card--lift principle"><h3><span>02 / CONTINUITY</span>Keep the decision history.</h3><p>Maps and plans retain accepted decisions. A reversal appends a superseding choice; brainstorm and debug refinements preserve the earlier evidence.</p></article>
+      <article class="card card--lift principle"><h3><span>03 / VERIFICATION</span>Check the code against its intent.</h3><p><a href="#dev-architecture-review" data-jump-skill>Architecture review</a> cites ratified ADRs and repository rules. <a href="#dev-spec-verify" data-jump-skill>Spec verification</a> checks atomic requirements. An equivalent implementation is valid; unavailable evidence stays explicit.</p></article>
+      <article class="card card--lift principle"><h3><span>04 / PROPORTION</span>Use the process the change needs.</h3><p>Choose meaningful behavioral checks and coherent increments. A typo does not need a program map, and an obvious fix does not need a large investigation.</p></article>
+      <article class="card card--lift principle"><h3><span>05 / UNCERTAINTY</span>Make the unknowns visible.</h3><p>Separate settled choices from open questions, blockers, and areas that need exploration. A falsified probe or an inconclusive investigation is useful evidence.</p></article>
+      <article class="card card--lift principle"><h3><span>06 / SCOPE</span>Let the user set the pace.</h3><p>Each skill stops at its own output: an approved plan, a findings report, a diff. Implementation, commits, and pushes are separate steps you trigger.</p></article>
+    </div>
+  </section>
+
+  <section id="maintain" class="section" aria-labelledby="maintain-title">
+    <div class="section-heading"><div><span class="eyebrow">06 &middot; Keep them current</span><h2 id="maintain-title">Improve them upstream. Sync them here.</h2><p class="section-lede">The <code>dev-*</code> skills belong to the Dev Skills repository. Improve them there, pull the change in, and keep this project’s rules in AGENTS.md.</p></div></div>
+    <div class="card maintenance-card split-grid">
+      <div>
+        <h3>Check, sync, link, test.</h3>
+        <p>The upstream is <code>[skills] upstream</code> in <code>workspace.toml</code>, or <code>--from</code> a local checkout. Each <code>dev-*</code> folder is replaced whole.</p>
+        <div class="command-block"><code id="maintenance-command">py -3.12 tools/skills/sync_upstream.py --check
+py -3.12 tools/skills/sync_upstream.py
+py -3.12 tools/skills/link.py
+py -3.12 -m unittest discover -s tests</code><button type="button" class="btn btn--ghost btn--sm copy-btn" data-copy-target="maintenance-command" aria-label="Copy the skill sync commands">Copy</button></div>
+        <p><code>--check</code> changes nothing and exits 1 when a skill differs from the upstream. On macOS and Linux, run <code>python3</code> instead of <code>py -3.12</code>.</p>
+        <a class="source-link" href="../../AGENTS.md">Read the skills section of AGENTS.md <span aria-hidden="true">&#8599;</span></a>
+      </div>
+      <div class="maintenance-notes">
+        <div><h3>Never edit a dev-* skill here.</h3><p>The next sync overwrites it. Put the project’s rule in AGENTS.md instead, the way its “Architecture review” and “Where things land” sections do.</p></div>
+        <div><h3>Only dev-* folders move.</h3><p>The sync never touches <code>gov-*</code> or <code>local-*</code> skills. A <code>dev-*</code> skill the upstream no longer has is listed, not deleted: remove it by hand, with its row in AGENTS.md, since the tests require every skill to be listed.</p></div>
+        <div><h3>Keep this guide aligned.</h3><p>When a sync changes a skill, update its card and examples here. The linked <code>SKILL.md</code> files define behavior; this page explains how to use it.</p></div>
+      </div>
+    </div>
+    <details class="card locations">
+      <summary>Where the dev-* skills write in this repository</summary>
+      <div class="table-wrap">
+        <table><caption class="sr-only">Output locations of the dev-* skills, from AGENTS.md</caption><thead><tr><th scope="col">Artifact</th><th scope="col">Path</th><th scope="col">Skill</th></tr></thead><tbody>
+          <tr><td>Brainstorm</td><td><code>resources/work/brainstorms/&lt;YYYY-MM&gt;/&lt;slug&gt;/&lt;slug&gt;.md</code></td><td><code>dev-brainstorm</code></td></tr>
+          <tr><td>Program map</td><td><code>resources/work/plans/&lt;program&gt;/MAP.md</code></td><td><code>dev-map</code></td></tr>
+          <tr><td>Plan</td><td><code>resources/work/plans/&lt;YYYY-MM&gt;/&lt;slug&gt;/&lt;slug&gt;.md</code>, with <code>STATUS.md</code> and <code>phases/</code> beside it</td><td><code>dev-plan</code></td></tr>
+          <tr><td>Investigation</td><td><code>resources/work/debug/&lt;slug&gt;/&lt;slug&gt;.md</code></td><td><code>dev-debug</code>, <code>dev-dig</code></td></tr>
+          <tr><td>Review or audit</td><td><code>resources/audits/YYYY-MM-DD_slug.{md,html}</code></td><td><code>dev-architecture-review</code>, <code>dev-spec-verify</code>, <code>dev-doc-audit</code></td></tr>
+          <tr><td>Deviation from a ratified ADR</td><td>Proposed by the review; the architect appends it to <code>architecture/deviations/README.md</code></td><td><code>dev-architecture-review</code></td></tr>
+        </tbody></table>
+      </div>
+      <p class="note">The month is the month the work started: a plan never moves when it runs late. Nothing in <code>resources/</code> is deleted; a superseded document gets a banner at the top and stays.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div><div class="footer-brand">Dev Skills &middot; governance repository</div><p>The dev-* workflow &middot; 13 skills &middot; synced from upstream</p></div>
+    <div><div class="footer-links"><a href="../../AGENTS.md">AGENTS.md</a><a href="../../resources/ui-kit/README.md">UI kit</a><a href="#top">Back to top &uarr;</a></div><p>Styled with the Prodigy Design System tokens in <code>resources/ui-kit/</code>.</p></div>
+  </div>
+</footer>
+<div id="copy-status" class="toasts" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+/* Local-only enhancements. The guide, the map's links and every skill stay readable without JavaScript. */
+(() => {
+  'use strict';
+  const root = document.documentElement;
+  const read = key => { try { return localStorage.getItem(key); } catch (_) { return null; } };
+  const save = (key, value) => { try { localStorage.setItem(key, value); } catch (_) { /* Optional persistence. */ } };
+  const $ = id => document.getElementById(id);
+
+  /* Theme: system → light → dark, matching prodigy-tokens.css (data-theme, else the system setting). */
+  const themes = ['system', 'light', 'dark'];
+  const themeIcons = { system: '◐', light: '☀', dark: '☾' };
+  const themeButton = document.querySelector('[data-theme-toggle]');
+  let theme = read('gov-theme');
+  if (!themes.includes(theme)) theme = 'system';
+  function applyTheme() {
+    if (theme === 'system') delete root.dataset.theme; else root.dataset.theme = theme;
+    const next = themes[(themes.indexOf(theme) + 1) % themes.length];
+    themeButton.textContent = `${themeIcons[theme]} ${theme[0].toUpperCase() + theme.slice(1)}`;
+    themeButton.setAttribute('aria-label', `Theme: ${theme}. Switch to ${next}.`);
+    themeButton.title = `Theme: ${theme}; next: ${next}`;
+  }
+  applyTheme();
+  themeButton.hidden = false;
+  themeButton.addEventListener('click', () => { theme = themes[(themes.indexOf(theme) + 1) % themes.length]; applyTheme(); save('gov-theme', theme); });
+
+  /* Pill rows: the selection glides between options (ui-kit 10.24) instead of swapping in place. */
+  function glide(group) {
+    const cursor = document.createElement('span');
+    cursor.className = 'pill-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    group.prepend(cursor);
+    group.classList.add('has-cursor');
+    let placed = false;
+    const place = () => {
+      const active = group.querySelector('[aria-pressed="true"]');
+      if (!active || !active.offsetWidth) { cursor.style.opacity = '0'; return; }
+      if (!placed) cursor.style.transition = 'none';
+      cursor.style.opacity = '1';
+      cursor.style.width = `${active.offsetWidth}px`;
+      cursor.style.height = `${active.offsetHeight}px`;
+      cursor.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
+      if (!placed) { cursor.getBoundingClientRect(); cursor.style.transition = ''; placed = true; }
+    };
+    new MutationObserver(place).observe(group, { subtree: true, attributes: true, attributeFilter: ['aria-pressed'] });
+    if ('ResizeObserver' in window) new ResizeObserver(place).observe(group);
+    return place;
+  }
+
+  /* Command syntax: Claude Code uses /, Codex uses $. */
+  let harness = read('dev-skills-harness') === 'codex' ? 'codex' : 'claude';
+  const harnessButtons = [...document.querySelectorAll('[data-harness]')];
+  const prefix = () => (harness === 'codex' ? '$' : '/');
+  function applyHarness() {
+    document.querySelectorAll('[data-command]').forEach(code => { code.textContent = prefix() + code.dataset.command; });
+    harnessButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.harness === harness)));
+  }
+  harnessButtons.forEach(button => button.addEventListener('click', () => { harness = button.dataset.harness; applyHarness(); save('dev-skills-harness', harness); }));
+
+  /* Catalog: filter by workflow and search by text. */
+  const cards = [...document.querySelectorAll('.skill-card')];
+  const search = $('skill-search');
+  const filterButtons = [...document.querySelectorAll('[data-filter]')];
+  let category = 'all';
+  // Cache content before the command syntax changes, so search is stable across harnesses.
+  const searchable = new Map(cards.map(card => [card, `${card.id} ${card.textContent}`.toLowerCase()]));
+  function updateCatalog() {
+    const terms = search.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    let visible = 0;
+    cards.forEach(card => {
+      const match = (category === 'all' || card.dataset.category === category)
+        && terms.every(term => searchable.get(card).includes(term.replace(/^[$/]/, '')));
+      card.hidden = !match;
+      if (match) visible += 1;
+    });
+    filterButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
+    $('result-count').textContent = `${visible} of ${cards.length} skills`;
+    $('empty-state').hidden = visible !== 0;
+  }
+  filterButtons.forEach(button => button.addEventListener('click', () => { category = button.dataset.filter; updateCatalog(); }));
+  search.addEventListener('input', updateCatalog);
+  $('reset-search').addEventListener('click', () => { category = 'all'; search.value = ''; updateCatalog(); search.focus(); });
+
+  /* Workflow map: route highlighting and a step inspector for the static, linked SVG. */
+  const board = $('workflow-map');
+  const steps = {
+    explore: { kicker: 'Explore a direction', title: 'dev-brainstorm', skill: 'dev-brainstorm',
+      description: 'Compare viable framings against the repository, make the trade-offs explicit, and recommend one direction.',
+      output: 'An exploration document with open questions and an accepted-decision ledger.',
+      next: 'Plan the chosen direction; use a program map if it spans several plans.',
+      command: 'dev-brainstorm add offline support to the dashboard', nextSkill: 'dev-plan', nextLabel: 'Next: plan' },
+    plan: { kicker: 'Make the work executable', title: 'dev-plan', skill: 'dev-plan',
+      description: 'Ask three to seven questions, read the code, and show the locked decisions and outline in chat. Once approved, write a phased roadmap, or refine one phase into a sub-plan you can ship in one session.',
+      output: 'A plan with locked decisions, dependencies, tests, documentation updates, and a verification recipe. STATUS.md marks it as the work lands.',
+      next: 'Review the plan, then trigger the first slice when you are ready. Planning never implements or commits on its own.',
+      command: 'dev-plan add an export endpoint', nextSkill: 'dev-test-scope', nextLabel: 'After building: test' },
+    build: { kicker: 'Implementation work', title: 'You + the agent', skill: 'dev-plan',
+      description: 'Implement the agreed scope using the repository’s existing patterns. Keep code, relevant tests, and documentation together in a coherent increment.',
+      output: 'The implementation and the evidence needed to check its behavior.',
+      next: 'Run focused checks, then review architectural fit and requirement coverage where relevant.',
+      command: 'Implement the next slice of the export endpoint plan, including its tests and documentation.', manual: true,
+      nextSkill: 'dev-test-scope', nextLabel: 'Next: test behavior', linkLabel: 'See planning guidance' },
+    test: { kicker: 'Prove observable behavior', title: 'dev-test-scope', skill: 'dev-test-scope',
+      description: 'Map tests to meaningful behavior, then add or strengthen coverage. Use the project’s runner, fixtures, and integration boundaries.',
+      output: 'New and strengthened tests, observed results, and a per-file coverage report.',
+      next: 'Resolve valid failures within the requested scope, then recheck. Passing tests do not by themselves establish architectural or specification compliance.',
+      command: 'dev-test-scope uncommitted', nextSkill: 'dev-architecture-review', nextLabel: 'Next: review architecture' },
+    architecture: { kicker: 'Check the design boundaries', title: 'dev-architecture-review', skill: 'dev-architecture-review',
+      description: 'Discover architecture documents, rules, ADRs, and applicable lint gates. Here, only VISION-RATIFIED ADRs produce findings, and every finding points back to the rule it breaks.',
+      output: 'Source-cited findings, consequences, proposed corrections, proposed deviation rows, and explicit review coverage.',
+      next: 'Address relevant findings and review again. Check the specification separately for missing required behavior.',
+      command: 'dev-architecture-review --staged', nextSkill: 'dev-spec-verify', nextLabel: 'Also: verify the spec' },
+    spec: { kicker: 'Close the plan-to-code loop', title: 'dev-spec-verify', skill: 'dev-spec-verify',
+      description: 'Break the PRD or a plan into atomic claims and trace each one to implementation evidence. Better-than-spec is not a gap.',
+      output: 'Exactly one verdict per claim: implemented, partial, missing, or deferred, each with evidence.',
+      next: 'Resolve real gaps within scope, recheck, and organize the finished changes into commits.',
+      command: 'dev-spec-verify the export endpoint must validate the requested format and reject unsupported formats',
+      nextSkill: 'dev-group-and-commit', nextLabel: 'When ready: commit' },
+    release: { kicker: 'Prepare a release when needed', title: 'dev-bump-version', skill: 'dev-bump-version',
+      description: 'Discover the version files, changelog, and any documented cadence. Refuse jumps and backward moves, and update the changelog and every version file together.',
+      output: 'A consistent, validated release diff. No commit, tag, publication, deployment, or restart is implied.',
+      next: 'Commit the reviewed release changes, then follow the repository’s release procedure when requested.',
+      command: 'dev-bump-version now', nextSkill: 'dev-group-and-commit', nextLabel: 'Next: release commit' },
+    commit: { kicker: 'Deliver coherent local history', title: 'dev-group-and-commit', skill: 'dev-group-and-commit',
+      description: 'Group changes by intent into small local commits, leaving existing staging alone. A mandatory CI-parity gate runs the same checks as CI against the full tree.',
+      output: 'Commit hashes, verification results, and an accurate account of remaining changes.',
+      next: 'For a program, record the actual outcome and unblock the next ticket. Push and publication follow their separately requested scope.',
+      command: 'dev-group-and-commit', nextSkill: 'dev-map', nextLabel: 'Program: record the outcome' },
+    chart: { kicker: 'Orient a larger program', title: 'dev-map · chart', skill: 'dev-map',
+      description: 'Define the destination and arrival criteria. Collect accepted decisions, open tickets, dependency edges, and areas still too unclear to frame as decisions.',
+      output: 'A MAP.md containing the decision ledger, typed frontier, blockers, unknowns, and exclusions.',
+      next: 'Choose a ready frontier ticket. A plan ticket feeds planning; an expedition feeds exploration.',
+      command: 'dev-map platform-modernization chart', nextSkill: 'dev-map', nextLabel: 'Next: work a ready ticket' },
+    work: { kicker: 'Advance one frontier ticket', title: 'dev-map · work', skill: 'dev-map',
+      description: 'Check freshness, then resolve exactly one unblocked ticket by its type: decision, expedition, plan, design, verify, probe, task, or chore. Then stop.',
+      output: 'An evidenced resolution in the append-only ledger, cleared blockers, or an explicit unresolved handoff.',
+      next: 'Select the next ready ticket after its prerequisites are resolved. A handoff remains open until its result exists.',
+      command: 'dev-map platform-modernization work', nextSkill: 'dev-plan', nextLabel: 'Plan ticket: shape the work' },
+    unknowns: { kicker: 'Make uncertainty useful', title: 'Fog of war → an expedition', skill: 'dev-brainstorm',
+      description: 'Describe what is unknown, what exploration could clarify it, and what would force earlier action. Do not turn guesses into locked decisions.',
+      output: 'A clearer question, a decision candidate, or a hypothesis that can be measured.',
+      next: 'Use brainstorm for open direction; use dig when there is a falsifiable diagnostic question.',
+      command: 'dev-brainstorm what would offline support change about our data model?', nextSkill: 'dev-dig', nextLabel: 'Measurable question: dig' },
+    dig: { kicker: 'Make the next measurement', title: 'dev-dig', skill: 'dev-dig',
+      description: 'State one falsifiable hypothesis, choose the cheapest measurement that could kill it, and record the numbers with the exact command that produced them.',
+      output: 'A confirmed, killed, or needs-a-bigger-instrument verdict on the owning record, and a mandatory next probe: no probe is a leaf.',
+      next: 'Feed the evidence into the investigation, or request implementation when the cause is established. Probes do not silently become fixes.',
+      command: 'dev-dig cache hit rate stayed flat after the key change', nextSkill: 'dev-debug', nextLabel: 'Broader investigation: debug' },
+    debug: { kicker: 'Find the cause before the fix', title: 'dev-debug', skill: 'dev-debug',
+      description: 'Rank at least three falsifiable hypotheses and test them against code, logs, tests, and history. Lock the cause, then show a summary in chat before writing.',
+      output: 'An investigation and fix plan with adjacent risks and a verification recipe.',
+      next: 'Apply the fix yourself, or phase it with a plan if it is structural. Use a measured probe if another observation is needed first.',
+      command: 'dev-debug requests intermittently time out after reconnecting', nextSkill: 'dev-dig', nextLabel: 'Need one more fact: dig' },
+    refactor: { kicker: 'Improve structure within scope', title: 'dev-refactor-module', skill: 'dev-refactor-module',
+      description: 'Run ten ordered quality passes on the selected module, reusing the repository’s logger, configuration, and shared helpers. Written for Python; other languages apply each pass’s intent.',
+      output: 'Scoped improvements inside the target folder, plus a file-by-file table of changes and line counts.',
+      next: 'Check the affected behavior, and leave anything outside the target folder alone.',
+      command: 'dev-refactor-module src/payments', nextSkill: 'dev-test-scope', nextLabel: 'Next: check behavior' },
+    docs: { kicker: 'Bring documentation back into agreement', title: 'dev-doc-audit', skill: 'dev-doc-audit',
+      description: 'Inventory docs, verify claims against code, and find gaps, then land five workstreams, source of truth first. --no-write stops at the plan.',
+      output: 'Evidence-backed findings and scoped documentation updates, with links and claims checked.',
+      next: 'Review the resulting diff and commit it when requested. Do not change code or weaken policy to make a claim appear true.',
+      command: 'dev-doc-audit authentication', nextSkill: 'dev-group-and-commit', nextLabel: 'When ready: commit docs' },
+    install: { kicker: 'Establish local readiness', title: 'dev-install', skill: 'dev-install',
+      description: 'Audit prerequisites and ask before every install, then walk .env, start the documented local target, and smoke-test it. You type credentials into .env yourself.',
+      output: 'A readiness audit in check mode, or a verified local setup with a rollback summary in full mode.',
+      next: 'Start the chosen task once its prerequisites are ready. smoketest verifies an existing target without starting or rebuilding it.',
+      command: 'dev-install check', nextSkill: 'dev-plan', nextLabel: 'Ready: plan the work' }
+  };
+  const routes = {
+    all: ['All connections', 'A map of the available paths, not a mandatory checklist. Follow a route to see a typical sequence; select any node for its purpose, output, and example.', 'explore'],
+    feature: ['New feature', 'Explore → plan → implement → test → verify → commit. Refactoring and documentation support the work when needed; findings loop back into focused changes.', 'explore'],
+    program: ['Program', 'Chart the territory, route one ready ticket through the appropriate workflow, and return its actual outcome to the ledger. The map coordinates the work; it is not another implementation phase.', 'chart'],
+    bug: ['Bug fix', 'Investigate the cause, add a probe if evidence is missing, implement the fix, and test it. Scope determines which architecture or specification checks are useful before committing.', 'debug'],
+    release: ['Release', 'Prepare the version and release notes → validate the diff → create the release commit. Tagging, publication, and deployment use the repository’s separate procedure when requested.', 'release']
+  };
+  const nodes = [...board.querySelectorAll('[data-wf-node]')];
+  const routeElements = [...board.querySelectorAll('[data-wf-routes]')];
+  const routeButtons = [...board.querySelectorAll('[data-wf-route]')];
+  const canvas = board.querySelector('.wf-canvas');
+  const command = $('wf-command');
+  const setText = (id, value) => { $(id).textContent = value; };
+
+  function showStep(key, pan = false) {
+    const step = steps[key];
+    if (!step) return;
+    nodes.forEach(node => {
+      const on = node.dataset.wfNode === key;
+      node.classList.toggle('is-selected', on);
+      node.setAttribute('aria-pressed', String(on));
+    });
+    setText('wf-detail-kicker', step.kicker);
+    setText('wf-detail-title', step.title);
+    setText('wf-detail-description', step.description);
+    setText('wf-detail-output', step.output);
+    setText('wf-detail-next', step.next);
+    if (step.manual) { delete command.dataset.command; command.textContent = step.command; }
+    else { command.dataset.command = step.command; command.textContent = prefix() + step.command; }
+    const detailLink = $('wf-detail-link');
+    detailLink.href = `#${step.skill}`;
+    detailLink.textContent = `${step.linkLabel || 'Open skill details'} ↗`;
+    const nextLink = $('wf-next-link');
+    nextLink.href = `#${step.nextSkill}`;
+    nextLink.textContent = `${step.nextLabel} →`;
+    if (pan) {
+      const box = nodes.find(node => node.dataset.wfNode === key).getBoundingClientRect();
+      const viewport = canvas.getBoundingClientRect();
+      if (box.left < viewport.left || box.right > viewport.right) {
+        canvas.scrollTo({ left: canvas.scrollLeft + box.left - viewport.left - (viewport.width - box.width) / 2, behavior: 'auto' });
+      }
+    }
+  }
+  function showRoute(key) {
+    if (!routes[key]) return;
+    const [title, description, initial] = routes[key];
+    board.classList.toggle('has-route', key !== 'all');
+    routeButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.wfRoute === key)));
+    routeElements.forEach(element => {
+      element.classList.toggle('is-muted', key !== 'all' && !element.dataset.wfRoutes.split(' ').includes(key));
+    });
+    setText('wf-route-title', title);
+    setText('wf-route-copy', description);
+    showStep(initial, true);
+  }
+  routeButtons.forEach(button => button.addEventListener('click', () => showRoute(button.dataset.wfRoute)));
+  nodes.forEach(node => {
+    node.setAttribute('role', 'button');
+    node.addEventListener('click', event => { event.preventDefault(); showStep(node.dataset.wfNode); });
+    node.addEventListener('keydown', event => { if (event.key === ' ') { event.preventDefault(); showStep(node.dataset.wfNode); } });
+  });
+
+  /* Reveal the enhanced controls, then let their cursors find the active pill. */
+  applyHarness();
+  showStep('explore');
+  document.querySelectorAll('[data-enhanced]').forEach(control => { control.hidden = false; });
+  const placers = [...document.querySelectorAll('.pills, .segmented')].map(glide);
+  placers.forEach(place => place());
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => placers.forEach(place => place()));
+
+  /* Deep links open the matching skill card. */
+  function revealHash() {
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) { return; }
+    const card = cards.find(item => item.id === id);
+    if (!card) return;
+    category = 'all'; search.value = ''; updateCatalog();
+    card.querySelector('details').open = true;
+    requestAnimationFrame(() => card.scrollIntoView({ block: 'start' }));
+  }
+  window.addEventListener('hashchange', revealHash);
+  document.querySelectorAll('[data-jump-skill]').forEach(link => link.addEventListener('click', event => {
+    event.preventDefault();
+    if (location.hash === link.hash) revealHash(); else location.hash = link.hash;
+  }));
+  revealHash();
+
+  /* The section in view is marked in the topbar. */
+  const navLinks = [...document.querySelectorAll('.nav a')];
+  if ('IntersectionObserver' in window) {
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(link => link.setAttribute('aria-current', String(link.hash === `#${entry.target.id}`)));
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    navLinks.forEach(link => { const target = document.querySelector(link.hash); if (target) spy.observe(target); });
+  }
+
+  /* Copy buttons, with a toast and a selection fallback. */
+  const status = $('copy-status');
+  let toastTimer;
+  function announce(message) {
+    clearTimeout(toastTimer);
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    status.replaceChildren(toast);
+    toastTimer = setTimeout(() => status.replaceChildren(), 4000);
+  }
+  async function copyText(text) {
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_) {
+      const focused = document.activeElement;
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('aria-label', 'Command to copy');
+      textarea.style.cssText = 'position:fixed;left:-9999px;top:0;';
+      document.body.appendChild(textarea);
+      textarea.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch (_) { /* Select the visible source below. */ }
+      textarea.remove();
+      if (focused instanceof HTMLElement) focused.focus({ preventScroll: true });
+      return copied;
+    }
+  }
+  document.querySelectorAll('[data-copy-target]').forEach(button => button.addEventListener('click', async () => {
+    const code = $(button.dataset.copyTarget);
+    if (!code) return;
+    if (await copyText(code.textContent.trim())) {
+      announce('Command copied.');
+      button.textContent = 'Copied';
+      setTimeout(() => { button.textContent = 'Copy'; }, 1800);
+    } else {
+      const range = document.createRange(); range.selectNodeContents(code);
+      const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+      announce('Clipboard unavailable. The command is selected; use your usual copy shortcut.');
+    }
+  }));
+
+  /* Print the full catalog; restore the screen state afterwards. */
+  let printState = [];
+  window.addEventListener('beforeprint', () => {
+    printState = [...document.querySelectorAll('details')].map(details => [details, details.open]);
+    printState.forEach(([details]) => { details.open = true; });
+  });
+  window.addEventListener('afterprint', () => { printState.forEach(([details, open]) => { details.open = open; }); });
+  root.classList.add('enhanced');
+})();
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@ We version the code that defines our software, but the decisions, requirements a
 | Deviations | `architecture/deviations/README.md` | Where code departs from a ratified ADR, with an exit condition. |
 | Questions | `architecture/questions.md` | Unconfirmed claims carry a `q…` or `a…` id. |
 | The map | `WORKSPACE.md` + `shared/INDEX.md` | Current state only; the tree and the index are generated. |
-| Skills | `.agents/skills/` (`gov-*` and `dev-*`) | One set for every agent tool. |
+| Skills | `.agents/skills/` (`gov-*` and `dev-*`) | One set for every agent tool. The `dev-*` workflow has a visual guide: [`skills-guide.html`](.agents/skills/skills-guide.html). |
 | Code graphs | `graphify-out/` and `.gitnexus/` in each repository, refreshed by `tools/repos/scan.py` | Agents ask the graph before they read the code. |
 | Working material | `resources/work/` (brainstorms, plans, debug), `resources/audits/` | Dated, never deleted; superseded with a banner. |
 

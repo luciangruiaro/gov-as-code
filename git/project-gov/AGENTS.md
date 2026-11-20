@@ -72,7 +72,7 @@ Each repository in the workspace (this one, and the product repositories cloned 
 <!-- HARD-RULES:END -->
 
 ## Skills (`.agents/skills/`)
-`gov-*` are this repository's own. `dev-*` are generic workflow skills synced from upstream (`py -3.12 tools/skills/sync_upstream.py`): change them only upstream, and put project rules in this file instead. Use them as entry points, not gates: brainstorm an idea, map a program, plan a phase, implement it, verify it against the spec, review it, then group the commits.
+`gov-*` are this repository's own. `dev-*` are generic workflow skills synced from upstream (`py -3.12 tools/skills/sync_upstream.py`): change them only upstream, and put project rules in this file instead. Use them as entry points, not gates: brainstorm an idea, map a program, plan a phase, implement it, verify it against the spec, review it, then group the commits. [`.agents/skills/skills-guide.html`](.agents/skills/skills-guide.html) is the visual guide to the `dev-*` workflow: the map, the catalog, recipes. When a sync changes a `dev-*` skill, update its card there.
 
 | Skill | Use it to |
 |---|---|
