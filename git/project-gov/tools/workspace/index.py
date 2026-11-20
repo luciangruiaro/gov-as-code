@@ -22,7 +22,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # tools/, so the w
 from workspace import config  # noqa: E402
 
 SKIP_FILES = {"desktop.ini", ".DS_Store", "Thumbs.db", "INDEX.md", "README.md"}
-SKIP_DIRS = {".git", ".claude", ".idea", ".vscode", ".venv", "__pycache__", "node_modules", ".pytest_cache"}
+SKIP_DIRS = {".git", ".claude", ".idea", ".vscode", ".venv", "__pycache__", "node_modules", ".pytest_cache",
+             "graphify-out", ".gitnexus"}  # local tool output is not part of the map
 SHOWN_HIDDEN = {".agents", ".github"}
 GOV_NOTES = {
     ".agents": "skills, shared by every agent tool",

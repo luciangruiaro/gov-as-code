@@ -1,6 +1,6 @@
 ---
 name: gov-code-sync
-description: Clone the product repositories listed in workspace.toml beside the governance repo and keep them current with fast-forward-only pulls, skipping any repository with local changes; ends with a status table. STUB until tools/repos/sync.py is implemented.
+description: Clone the product repositories listed in workspace.toml beside the governance repo, keep them current with fast-forward-only pulls (skipping any repository with local changes), then refresh their code graphs (Graphify and GitNexus); ends with a status table. The pull is a STUB until tools/repos/sync.py is implemented; the graph refresh (tools/repos/scan.py) works today.
 argument-hint: <empty for all repositories; a repository slug for one; "check" to report only>
 user_invocable: true
 ---
@@ -16,6 +16,10 @@ The digest, the reviews and `dev-spec-verify` read the **code itself** in the wo
 2. For a missing repository, ask before cloning it (`url` comes from `workspace.toml`).
 3. Run `py -3.12 tools/repos/sync.py`, which fetches and then fast-forwards only.
 4. Report the final table, and list anything skipped and why.
+
+## Then refresh the code graphs (works today)
+5. Run `py -3.12 tools/repos/scan.py`. For this repository and each clone, it refreshes the Graphify graph (`graphify-out/`, an AST pass with no language model) and the GitNexus index (`.gitnexus/`, with no files injected). It keeps both out of Git.
+6. Report its table: each graph is fresh, stale or missing, and any tool that is not installed. From here on, agents answer code questions from these graphs (`AGENTS.md`, "Code intelligence").
 
 ## Hard rules
 - Fast-forward only. Never merge, rebase, reset, stash or force-push.

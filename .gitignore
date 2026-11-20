@@ -22,5 +22,10 @@ __pycache__/
 !/git/README.md
 !/git/project-gov/
 
-# Claude Code links made by tools/link_skills.py (personal, per machine)
+# Claude Code's local folders: skill links made by tools/skills/link.py, GitNexus's installed skills, settings
+/.claude/
 /git/project-gov/.claude/
+
+# Code graphs: local snapshots, refreshed by git/project-gov/tools/repos/scan.py
+graphify-out/
+.gitnexus/

@@ -98,10 +98,11 @@ Product repositories are cloned beside this one, in the workspace's `git/` folde
 | Backlog | Jira or Azure DevOps → `Jira/` | `tools/mirrors/backlog.py` (`gov-backlog-sync`) | One-way out | Three times a day |
 | Feedback | The app's database → `Feedback/` | `tools/mirrors/feedback.py` (`gov-feedback-sync`) | One-way out | Hourly in working hours |
 | Code | Product repositories → `git/<repo>/` | `tools/repos/sync.py` (`gov-code-sync`) | Fast-forward only | Daily, before the digest |
+| Code graphs | Each repository → its `graphify-out/` (Graphify) and `.gitnexus/` (GitNexus) | `tools/repos/scan.py` (`gov-code-sync`) | Local snapshots, never committed | After each code sync, and after code changes |
 | Ideas to decisions | `Team/Ideas/` → `Team/Proposals/` → `architecture/decisions/backlog.md` → ADR | `dev-brainstorm`, `gov-adr` | Into Git once decided | On decision |
 | Daily digest | All of the above → team chat | `tools/reporting/digest.py` (`gov-digest`) | Out, approval-gated | Weekdays before stand-up |
 
-Status: the PRD flow and the indexes are implemented. The backlog, feedback, code and digest tools are **stubs with full contracts**: implement each per project (`tools/README.md`).
+Status: the PRD flow, the indexes and the code-graph scan are implemented. The backlog, feedback, code-sync and digest tools are **stubs with full contracts**: implement each per project (`tools/README.md`).
 
 ## 7. Looking for… → go to
 | Looking for | Go to |
@@ -116,6 +117,7 @@ Status: the PRD flow and the indexes are implemented. The backlog, feedback, cod
 | Who does what, and who expects what | `Team/Team structure.md`, `Team/Responsibilities matrix.md` |
 | What the leads asked for | `Team/Directives.md` |
 | What was said in a call | `Transcripts/` |
+| How the code is built, without reading all of it | `graphify-out/GRAPH_REPORT.md` in each repository, and the GitNexus MCP tools (`AGENTS.md`, "Code intelligence") |
 | Plans, brainstorms, investigations | `resources/work/` |
 | Reviews and audits | `resources/audits/` |
 | The skills, and which tool reads what | `.agents/skills/`, and `AGENTS.md` |

@@ -51,7 +51,7 @@ Requirements: Python 3.12+ (standard library only), pandoc 3+ for the PRD sync, 
 | Folder structure, READMEs, templates, naming rules (both halves) | Complete |
 | `AGENTS.md` (one rule set for every agent tool), `CLAUDE.md`, Copilot instructions, `WORKSPACE.md` | Complete |
 | Skills: 13 generic `dev-*` (from the upstream `dev-skills` repository) and 7 project `gov-*` | Complete. The 4 `gov-*` skills that rely on stub tools say so. |
-| PRD sync (Word → Markdown), PRD impact (diff → decisions → worksheet), ADR index, workspace index, skill linker, upstream skill sync, bootstrap | Implemented and tested |
+| PRD sync (Word → Markdown), PRD impact (diff → decisions → worksheet), ADR index, workspace index, code-graph scan (Graphify, GitNexus), skill linker, upstream skill sync, bootstrap | Implemented and tested |
 | Backlog pull (Jira or Azure DevOps), feedback pull, code sync, digest collector, dashboard | Stubs, each with its full contract in the docstring: implement per project |
 
 ## Samples
@@ -65,4 +65,5 @@ All fictional, marked `SAMPLE`, dropped by `new-project.py`:
 ## Keeping the skeleton current
 - Generic skills: `cd git/project-gov && py -3.12 tools/skills/sync_upstream.py` (from `workspace.toml` `[skills] upstream`).
 - Checks: `cd git/project-gov && py -3.12 -m unittest discover -s tests`.
+- Code graphs (Graphify and GitNexus, so agents read the code through a graph instead of rescanning it): `py -3.12 git/project-gov/tools/repos/scan.py .` from the root, or `--check .` to see whether they are fresh. The rules are in [`AGENTS.md`](AGENTS.md).
 - An improvement made in a project that holds for every project belongs back here.

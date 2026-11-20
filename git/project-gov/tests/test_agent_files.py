@@ -1,6 +1,7 @@
 """The agent files agree: one set of hard rules, one skills table, skills every tool can load."""
 from __future__ import annotations
 
+import json
 import re
 import unittest
 
@@ -48,6 +49,20 @@ class AgentFiles(unittest.TestCase):
         text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         listed = set(re.findall(r"^\| `((?:gov|dev)-[a-z0-9-]+)` \|", text, re.MULTILINE))
         self.assertEqual(listed, {p.name for p in shared_skills()})
+
+    def test_no_tool_writes_its_own_block_into_the_agent_files(self):
+        rc = json.loads((ROOT / ".gitnexusrc").read_text(encoding="utf-8"))
+        self.assertIs(rc.get("skipAgentsMd"), True, "gitnexus analyze would rewrite AGENTS.md and CLAUDE.md")
+        for name in ("AGENTS.md", "CLAUDE.md"):
+            text = (ROOT / name).read_text(encoding="utf-8")
+            with self.subTest(file=name):
+                self.assertNotIn("<!-- gitnexus:start -->", text)
+                self.assertNotIn("\n## graphify\n", text)
+
+    def test_agents_md_tells_agents_to_use_the_code_graphs(self):
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("## Code intelligence", text)
+        self.assertIn("tools/repos/scan.py", text)
 
 
 if __name__ == "__main__":

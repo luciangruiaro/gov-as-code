@@ -15,8 +15,9 @@ tools/
 ├── mirrors/        one-way mirrors onto the shared drive                    (stubs)
 │   ├── backlog.py      Jira or Azure DevOps → Jira/, grouped by state
 │   └── feedback.py     the app's feedback table → Feedback/
-├── repos/          the product repositories beside this one                 (stub)
-│   └── sync.py         clones them, then fast-forwards only
+├── repos/          the product repositories beside this one
+│   ├── sync.py         clones them, then fast-forwards only                 (stub)
+│   └── scan.py         refreshes their code graphs: Graphify and GitNexus
 └── reporting/      what people read                                          (stubs)
     ├── digest.py       the daily digest's evidence bundle
     └── dashboard.py    one offline HTML dashboard
@@ -33,6 +34,7 @@ The PRD's own tools live with the PRD, in [`../prd/sync/`](../prd/sync/SYNC.md):
 | `mirrors/backlog.py` | **stub** | `gov-backlog-sync` | `py -3.12 tools/mirrors/backlog.py [--full] [--dry-run]` |
 | `mirrors/feedback.py` | **stub** | `gov-feedback-sync` | `py -3.12 tools/mirrors/feedback.py [--full] [--dry-run]` |
 | `repos/sync.py` | **stub** | `gov-code-sync` | `py -3.12 tools/repos/sync.py [--check] [--clone]` |
+| `repos/scan.py` | implemented | `gov-code-sync` | `py -3.12 tools/repos/scan.py [--check] [--only graphify\|gitnexus] [PATH ...]` |
 | `reporting/digest.py` | **stub** | `gov-digest` | `py -3.12 tools/reporting/digest.py [--since HOURS]` |
 | `reporting/dashboard.py` | **stub** | — | `py -3.12 tools/reporting/dashboard.py [--out FILE]` |
 

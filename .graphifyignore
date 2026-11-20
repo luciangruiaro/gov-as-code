@@ -1,0 +1,5 @@
+# What the Graphify scan leaves out (gitignore syntax): graph output, local tool state, IDE files.
+graphify-out/
+.gitnexus/
+.claude/
+.idea/

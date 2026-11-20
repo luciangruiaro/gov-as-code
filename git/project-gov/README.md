@@ -14,6 +14,7 @@ We version the code that defines our software, but the decisions, requirements a
 | Questions | `architecture/questions.md` | Unconfirmed claims carry a `q…` or `a…` id. |
 | The map | `WORKSPACE.md` + `shared/INDEX.md` | Current state only; the tree and the index are generated. |
 | Skills | `.agents/skills/` (`gov-*` and `dev-*`) | One set for every agent tool. |
+| Code graphs | `graphify-out/` and `.gitnexus/` in each repository, refreshed by `tools/repos/scan.py` | Agents ask the graph before they read the code. |
 | Working material | `resources/work/` (brainstorms, plans, debug), `resources/audits/` | Dated, never deleted; superseded with a banner. |
 
 ## How the law reaches the code
@@ -34,5 +35,5 @@ Link the shared drive in beside `git/` (WORKSPACE.md section 5), then `py -3.12 
 ## Status
 | Part | State |
 |---|---|
-| PRD sync (`sync.py`), PRD impact (`impact.py`), ADR index, workspace index, skill linker, upstream skill sync | Implemented and tested |
+| PRD sync (`sync.py`), PRD impact (`impact.py`), ADR index, workspace index, code-graph scan (Graphify, GitNexus), skill linker, upstream skill sync | Implemented and tested |
 | Backlog pull, feedback pull, code sync, digest collector, dashboard | Stubs with full contracts in their docstrings (`tools/README.md`): implement per project |

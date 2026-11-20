@@ -34,7 +34,8 @@ from pathlib import Path
 SKELETON = Path(__file__).resolve().parent
 TEMPLATE_SHARED = SKELETON / "shared"
 TEMPLATE_GOV = SKELETON / "git" / "project-gov"
-SKIP = shutil.ignore_patterns(".claude", "__pycache__", ".pytest_cache", ".env", ".idea", "local")
+SKIP = shutil.ignore_patterns(".claude", "__pycache__", ".pytest_cache", ".env", ".idea", "local", "graphify-out",
+                              ".gitnexus")
 TEXT = {".md", ".toml", ".py", ".txt", ".json", ".yml", ".yaml", ".example", ".cfg", ".ini", ""}
 
 # Sample files and folders, relative to the gov repo ("gov:") or the shared drive ("shared:").

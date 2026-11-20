@@ -6,6 +6,7 @@ The jobs that keep the workspace current. Times are the team's local time. A stu
 | Job | Command | When | Status |
 |---|---|---|---|
 | Code sync | `py -3.12 tools/repos/sync.py` | Weekdays 07:30 | stub |
+| Code graphs (Graphify, GitNexus) | `py -3.12 tools/repos/scan.py` | Weekdays 07:40, after the code sync | implemented |
 | Backlog mirror | `py -3.12 tools/mirrors/backlog.py` | Weekdays 07:00, 12:00, 16:00 | stub |
 | Feedback mirror | `py -3.12 tools/mirrors/feedback.py` | Hourly, 08:00 to 18:00 | stub |
 | Daily digest (collect, compose, approve, send) | `gov-digest` skill, run by a scheduled agent session | Weekdays 08:30, before stand-up | stub |

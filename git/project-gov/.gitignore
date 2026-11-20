@@ -8,6 +8,10 @@
 .agents/skills/local-*/
 resources/local/
 
+# Code graphs: local snapshots, refreshed by tools/repos/scan.py
+graphify-out/
+.gitnexus/
+
 # Python
 __pycache__/
 *.pyc

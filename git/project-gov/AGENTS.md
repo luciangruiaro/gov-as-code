@@ -27,12 +27,12 @@ Everything in this repository serves that loop.
 | `architecture/` | `architecture.md` (overview), `decisions/` (ADRs, index, template, backlog), `deviations/` (the register), `questions.md`. |
 | `resources/` | `ui-kit/` (brand tokens), `work/` (brainstorms, plans, debug), `audits/` (reviews and alignment worksheets). |
 | `operations/` | Schedules, notifications, ports. |
-| `tools/` | Deterministic tools, one folder per job: `workspace/` (config, index), `architecture/` (ADR index), `skills/` (link, upstream sync), `mirrors/` (backlog, feedback), `repos/` (code sync), `reporting/` (digest, dashboard). Standard library only; stubs say so in their docstring. |
+| `tools/` | Deterministic tools, one folder per job: `workspace/` (config, index), `architecture/` (ADR index), `skills/` (link, upstream sync), `mirrors/` (backlog, feedback), `repos/` (code sync, code graphs), `reporting/` (digest, dashboard). Standard library only; stubs say so in their docstring. |
 | `tests/` | Checks for the tools, the generated files and these agent files. |
 | `.agents/skills/` | Shared skills: `gov-*` (this repo's own) and `dev-*` (generic, from upstream). Personal skills are `local-*` and gitignored. |
 | `.github/copilot-instructions.md` | Copilot's entry file: repeats the hard rules below. |
 
-**Local only (gitignored):** `.env` (copy `.env.example`), `.claude/`, `.agents/skills/local-*/`, `resources/local/`, `*.local.md`, `*.local.toml`.
+**Local only (gitignored):** `.env` (copy `.env.example`), `.claude/`, `.agents/skills/local-*/`, `resources/local/`, `*.local.md`, `*.local.toml`, and the code graphs `graphify-out/` and `.gitnexus/`.
 
 ## Agent tools
 | Tool | Reads its instructions from | Reads skills from |
@@ -41,6 +41,23 @@ Everything in this repository serves that loop.
 | GitHub Copilot | `.github/copilot-instructions.md` and this file | `.agents/skills/` |
 | Claude Code | `CLAUDE.md`, which imports this file | `.claude/skills/`, which holds links to `.agents/skills/`: run `py -3.12 tools/skills/link.py` once after cloning |
 | Any other agent | This file: point it here | `.agents/skills/<name>/SKILL.md`, read as plain instructions |
+
+This file is the one source of instructions. Tools that offer to write their own section into an agent file are told not to: `.gitnexusrc` sets `skipAgentsMd`, and `graphify claude install` and `graphify codex install` are not used, because the section below already covers them.
+
+## Code intelligence: read the code through its graphs
+Each repository in the workspace (this one, and the product repositories cloned beside it) can carry two snapshots of its code. They let an agent answer from a graph instead of reading the whole codebase again, every session.
+
+| Graph | Where | Ask it |
+|---|---|---|
+| **Graphify** | `graphify-out/` in the repository: `GRAPH_REPORT.md` (communities, god nodes, surprising links), `graph.json`, `graph.html` | The shape of the code: `graphify query "<question>"`, `graphify path "<A>" "<B>"`, `graphify explain "<concept>"` (or `py -3.12 -m graphify …` when `graphify` is not on the PATH) |
+| **GitNexus** | `.gitnexus/` in the repository, served by the GitNexus MCP server: tools `query`, `context`, `impact`, `detect_changes`, `rename`, `cypher`; resources `gitnexus://repo/<name>/context`, `…/clusters`, `…/processes` | The specifics: a symbol's callers and callees, execution flows, the blast radius of a change |
+
+1. **Graph first.** Before exploring code, use whichever graph exists. Read `graphify-out/GRAPH_REPORT.md` for the shape, then ask GitNexus (`query`, `context`) or Graphify (`query`, `path`) for the part you need. Open source files only to confirm what a graph points to. Never scan a whole repository for a question that a graph can answer.
+2. **Check freshness, then refresh if needed.** `py -3.12 tools/repos/scan.py --check` reports each graph as fresh, stale or missing. `py -3.12 tools/repos/scan.py` refreshes them all. It is cheap: Graphify's AST pass uses no language model, and GitNexus indexes without injecting files. Run it after `gov-code-sync`, and after you change code. If you cannot refresh, say that your answer comes from the snapshot of the last scan.
+3. **Before you change a symbol in a product repository,** run GitNexus `impact` on it (upstream) and report the blast radius. Before you commit code, run `detect_changes` to confirm that only the expected symbols and flows moved. Warn the user before going ahead on a HIGH or CRITICAL risk.
+4. **No graph, no problem.** If neither tool is installed (`pip install graphifyy`, `npm i -g gitnexus`) or no graph exists yet, read the code directly, and say that a scan would make the next session faster.
+5. **A graph is a snapshot, not the truth.** Mainline code is the witness. Graph outputs are never committed (`graphify-out/` and `.gitnexus/` are ignored, and the scan adds them to a product repository's local `.git/info/exclude`).
+6. **Documents are opt-in.** The scan graphs code only. The full `/graphify` skill can add documents and images (the PRD mirror, ADRs, decks) to the graph, but it uses the language model and costs tokens: run it when the user asks.
 
 <!-- HARD-RULES:BEGIN -->
 ## Hard rules
@@ -107,13 +124,14 @@ The `dev-*` skills take their output paths from this table.
 
 ## Commands
 ```
-py -3.12 prd/sync/sync.py [--check | --log "…"]   # mirror the master PRD from Word
-py -3.12 prd/sync/impact.py [--write]             # the decisions a PRD change touches
-py -3.12 tools/architecture/adr_index.py [--check]              # rebuild the ADR index
-py -3.12 tools/workspace/index.py [--check]        # the drive's INDEX.md and the tree in WORKSPACE.md
-py -3.12 tools/skills/link.py                      # give Claude Code the shared skills
-py -3.12 tools/skills/sync_upstream.py [--from PATH]    # refresh the dev-* skills from upstream
-py -3.12 -m unittest discover -s tests             # every check
+py -3.12 prd/sync/sync.py [--check | --log "…"]          # mirror the master PRD from Word
+py -3.12 prd/sync/impact.py [--write]                    # the decisions a PRD change touches
+py -3.12 tools/architecture/adr_index.py [--check]       # rebuild the ADR index
+py -3.12 tools/workspace/index.py [--check]              # the drive's INDEX.md and the tree in WORKSPACE.md
+py -3.12 tools/repos/scan.py [--check] [PATH ...]        # refresh the code graphs (Graphify, GitNexus)
+py -3.12 tools/skills/link.py                            # give Claude Code the shared skills
+py -3.12 tools/skills/sync_upstream.py [--from PATH]     # refresh the dev-* skills from upstream
+py -3.12 -m unittest discover -s tests                   # every check
 ```
 `py -3.12` is the Windows launcher. On macOS and Linux, run `python3` wherever these files say `py -3.12`.
 
