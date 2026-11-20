@@ -40,14 +40,19 @@ TEXT = {".md", ".toml", ".py", ".txt", ".json", ".yml", ".yaml", ".example", ".c
 
 # Sample files and folders, relative to the gov repo ("gov:") or the shared drive ("shared:").
 SAMPLES = [
-    "gov:prd/Product Requirements Document (Master) - Project Name v0.1.md",
+    "gov:prd/Product Requirements Document (Master) - Project Name v0.2.md",
     "gov:prd/templates/sample-master-prd.md",
     "gov:architecture/decisions/ADR-002-sample-single-sign-on.md",
+    "gov:architecture/decisions/ADR-004-sample-hello-world-three-repositories.md",
+    "gov:architecture/decisions/ADR-005-sample-hello-world-postgres.md",
+    "gov:architecture/decisions/ADR-006-sample-hello-world-python-api.md",
+    "gov:architecture/decisions/ADR-007-sample-hello-world-react-web.md",
     "gov:resources/audits/2026-01-20_prd-adr-alignment.md",
     "gov:resources/work/brainstorms/2026-01",
     "gov:resources/work/plans/2026-01",
     "gov:resources/work/debug/upload-limit-ignored",
     "shared:PRD/Product Requirements Document (Master) - Project Name v0.1.docx",
+    "shared:PRD/Product Requirements Document (Master) - Project Name v0.2.docx",
     "shared:Feedback/2026-01-15-a1b2c3d4.md",
     "shared:Feedback/images/2026-01-15-a1b2c3d4-1.png",
     "shared:Jira/current-sprint/PRJ-1.md",
