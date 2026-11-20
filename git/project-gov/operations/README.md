@@ -35,4 +35,7 @@ A block reserved for this project's local servers, so they don't collide with ot
 | Port | Serves |
 |---|---|
 | 47100 | Local preview of this repository's HTML (`py -3.12 -m http.server 47100`) |
+| 47101 | SAMPLE: Hello World web app, `project-fe` ([ADR-004](../architecture/decisions/ADR-004-sample-hello-world-three-repositories.md)) |
+| 47102 | SAMPLE: Hello World API, `project-be` ([ADR-004](../architecture/decisions/ADR-004-sample-hello-world-three-repositories.md)) |
+| 47103 | SAMPLE: Hello World Postgres, `project-db` ([ADR-004](../architecture/decisions/ADR-004-sample-hello-world-three-repositories.md)) |
 | 47101–47199 | Free: assign here, one row each |

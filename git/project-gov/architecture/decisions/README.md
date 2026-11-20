@@ -28,4 +28,8 @@ Generated from the ADRs' headers by `py -3.12 tools/architecture/adr_index.py`. 
 |---|---|---|---|---|
 | [ADR-001](ADR-001-adopt-governance-as-code.md) | Governance lives in code, beside the code | DRAFT | 2026-01-05 | — |
 | [ADR-002](ADR-002-sample-single-sign-on.md) | SAMPLE: Identity comes only from the organisation's single sign-on | DRAFT | 2026-01-14 | FR-001, NFR-002, OI-001 |
+| [ADR-004](ADR-004-sample-hello-world-three-repositories.md) | SAMPLE: Hello World is three small repositories beside the governance repository | DRAFT | 2026-11-20 | NFR-006, SM-002, GR-002, OI-003 |
+| [ADR-005](ADR-005-sample-hello-world-postgres.md) | SAMPLE: Postgres holds the greeting, and the schema is plain SQL | DRAFT | 2026-11-20 | FR-006, CFG-002, GR-002, NFR-006 |
+| [ADR-006](ADR-006-sample-hello-world-python-api.md) | SAMPLE: The API is one Python endpoint on the standard library | DRAFT | 2026-11-20 | FR-006, FR-007, NFR-006 |
+| [ADR-007](ADR-007-sample-hello-world-react-web.md) | SAMPLE: The web app is React on Vite, styled only by the UI kit | DRAFT | 2026-11-20 | FR-006, FR-007, NFR-003, NFR-005, NFR-006 |
 <!-- ADR-INDEX:END -->
